@@ -3,195 +3,1031 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Curtain Calculator</title>
+<title>Curtain Measurement & Quotation</title>
 
 <style>
-body {
-    font-family: Arial, sans-serif;
-    background: #f2f5f8;
-    margin: 0;
-    padding: 15px;
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f3f6f9;
+  color:#222;
 }
-
-.container {
-    max-width: 700px;
-    margin: auto;
-    background: white;
-    padding: 18px;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+.app{
+  max-width:1100px;
+  margin:auto;
+  padding:15px;
 }
-
-h1 {
-    text-align: center;
-    font-size: 22px;
-    margin-bottom: 5px;
+header{
+  background:#173f5f;
+  color:white;
+  padding:18px;
+  border-radius:14px;
+  margin-bottom:15px;
 }
-
-.subtitle {
-    text-align: center;
-    color: #666;
-    margin-bottom: 15px;
+header h1{
+  margin:0;
+  font-size:24px;
 }
-
-table {
-    width: 100%;
-    border-collapse: collapse;
+header p{
+  margin:6px 0 0;
+  opacity:.85;
 }
-
-th {
-    background: #1f4e78;
-    color: white;
-    padding: 8px;
-    font-size: 13px;
+.card{
+  background:white;
+  padding:18px;
+  border-radius:14px;
+  margin-bottom:15px;
+  box-shadow:0 2px 10px rgba(0,0,0,.07);
 }
-
-td {
-    border-bottom: 1px solid #ddd;
-    padding: 5px;
-    text-align: center;
+h2{
+  margin-top:0;
+  color:#173f5f;
 }
-
-input {
-    width: 90%;
-    padding: 7px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
 }
-
-.result {
-    font-weight: bold;
+.field label{
+  display:block;
+  font-weight:bold;
+  margin-bottom:5px;
+  font-size:14px;
 }
-
-.total {
-    margin-top: 15px;
-    padding: 12px;
-    background: #e8f3ff;
-    border-radius: 8px;
-    text-align: center;
-    font-size: 18px;
-    font-weight: bold;
+input,select,textarea{
+  width:100%;
+  padding:10px;
+  border:1px solid #ccc;
+  border-radius:8px;
+  font-size:15px;
 }
-
-button {
-    width: 100%;
-    margin-top: 12px;
-    padding: 11px;
-    border: none;
-    border-radius: 7px;
-    background: #1f4e78;
-    color: white;
-    font-size: 16px;
+textarea{min-height:70px;resize:vertical}
+button{
+  border:0;
+  border-radius:9px;
+  padding:11px 15px;
+  font-size:15px;
+  cursor:pointer;
+  margin:4px;
 }
-
-button:hover {
-    background: #163b5c;
+.primary{background:#173f5f;color:white}
+.success{background:#168a55;color:white}
+.danger{background:#c0392b;color:white}
+.secondary{background:#e9eef3;color:#173f5f}
+.menu{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+.menu button{
+  min-height:65px;
+  background:white;
+  border:1px solid #d9e0e6;
+  color:#173f5f;
+  font-weight:bold;
+  box-shadow:0 2px 7px rgba(0,0,0,.05);
+}
+.hidden{display:none}
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+}
+.back{
+  background:#e9eef3;
+  color:#173f5f;
+}
+.table-wrap{
+  overflow-x:auto;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:850px;
+}
+th{
+  background:#173f5f;
+  color:white;
+  padding:9px;
+}
+td{
+  border-bottom:1px solid #ddd;
+  padding:6px;
+  text-align:center;
+}
+td input,td select{
+  min-width:100px;
+}
+.totalbox{
+  background:#eaf5ff;
+  padding:14px;
+  border-radius:10px;
+  margin-top:12px;
+  font-size:18px;
+  font-weight:bold;
+}
+.customer{
+  border:1px solid #ddd;
+  padding:13px;
+  border-radius:10px;
+  margin-bottom:10px;
+}
+.customer strong{
+  color:#173f5f;
+  font-size:17px;
+}
+.small{
+  color:#666;
+  font-size:13px;
+}
+.logo-preview{
+  max-width:130px;
+  max-height:80px;
+  display:block;
+  margin-top:8px;
+}
+.quote{
+  border:1px solid #ddd;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:10px;
+}
+@media(max-width:700px){
+  .grid{grid-template-columns:1fr}
+  .menu{grid-template-columns:repeat(2,1fr)}
+  header h1{font-size:20px}
+}
+@media print{
+  body{background:white}
+  .no-print{display:none!important}
+  .app{max-width:none}
+  .card{box-shadow:none;border:0}
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="app">
 
-<h1>CURTAIN CALCULATOR</h1>
-<div class="subtitle">Height & Width in Centimeters</div>
+<header>
+  <h1>🪟 Curtain Measurement & Quotation</h1>
+  <p>Professional Curtain Shop Management Tool</p>
+</header>
 
-<table>
-<thead>
-<tr>
-<th>No.</th>
-<th>Area / Room</th>
-<th>Height (cm)</th>
-<th>Width (cm)</th>
-<th>Sq.Ft</th>
-</tr>
-</thead>
+<!-- HOME -->
+<section id="home">
+  <div class="card">
+    <h2>Welcome</h2>
+    <p id="businessWelcome">Start a new customer measurement or open a saved customer.</p>
+  </div>
 
-<tbody id="tableBody">
-</tbody>
-</table>
+  <div class="menu">
+    <button onclick="showPage('measurement')">➕<br>New Measurement</button>
+    <button onclick="showPage('customers')">👥<br>Saved Customers</button>
+    <button onclick="showPage('quotations')">🧾<br>Quotations</button>
+    <button onclick="showPage('settings')">⚙️<br>Settings</button>
+  </div>
+</section>
 
-<div class="total">
-Total: <span id="totalSqFt">0.00</span> Sq.Ft
+
+<!-- MEASUREMENT -->
+<section id="measurement" class="hidden">
+
+  <div class="topbar">
+    <h2>New Measurement</h2>
+    <button class="back" onclick="showPage('home')">← Home</button>
+  </div>
+
+  <div class="card">
+
+    <div class="grid">
+
+      <div class="field">
+        <label>Customer Name *</label>
+        <input id="customerName" type="text" placeholder="Customer name">
+      </div>
+
+      <div class="field">
+        <label>Phone Number</label>
+        <input id="customerPhone" type="tel" placeholder="Phone / WhatsApp">
+      </div>
+
+      <div class="field">
+        <label>Address</label>
+        <textarea id="customerAddress" placeholder="Customer address"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Date</label>
+        <input id="measurementDate" type="date">
+      </div>
+
+      <div class="field">
+        <label>Measurement Unit</label>
+        <select id="unit" onchange="rebuildRows()">
+          <option value="cm">Centimeter (CM)</option>
+          <option value="inch">Inch</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Default Rate / Sq.Ft</label>
+        <input id="defaultRate" type="number" step="0.01" placeholder="Optional">
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Measurements</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Area / Room</th>
+            <th>Curtain Type</th>
+            <th>Height</th>
+            <th>Width</th>
+            <th>Sq.Ft</th>
+            <th>Rate</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody id="measurementRows"></tbody>
+      </table>
+    </div>
+
+    <div class="totalbox">
+      Total Sq.Ft: <span id="totalSqft">0.00</span>
+      <br>
+      Grand Total: ₹<span id="grandTotal">0.00</span>
+    </div>
+
+    <div style="margin-top:12px">
+      <button class="success" onclick="saveMeasurement()">💾 Save Measurement</button>
+      <button class="secondary" onclick="clearMeasurement()">🧹 Clear</button>
+      <button class="primary" onclick="createQuotation()">🧾 Save & Create Quotation</button>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- CUSTOMERS -->
+<section id="customers" class="hidden">
+
+  <div class="topbar">
+    <h2>Saved Customers</h2>
+    <button class="back" onclick="showPage('home')">← Home</button>
+  </div>
+
+  <div class="card">
+    <input id="customerSearch" type="text"
+           placeholder="🔍 Search customer name or phone..."
+           oninput="displayCustomers()">
+  </div>
+
+  <div id="customerList"></div>
+
+</section>
+
+
+<!-- QUOTATIONS -->
+<section id="quotations" class="hidden">
+
+  <div class="topbar">
+    <h2>Quotations</h2>
+    <button class="back" onclick="showPage('home')">← Home</button>
+  </div>
+
+  <div id="quotationList"></div>
+
+</section>
+
+
+<!-- SETTINGS -->
+<section id="settings" class="hidden">
+
+  <div class="topbar">
+    <h2>Business Settings</h2>
+    <button class="back" onclick="showPage('home')">← Home</button>
+  </div>
+
+  <div class="card">
+
+    <div class="grid">
+
+      <div class="field">
+        <label>Business / Shop Name</label>
+        <input id="businessName" placeholder="Your Curtain Shop">
+      </div>
+
+      <div class="field">
+        <label>Phone</label>
+        <input id="businessPhone" placeholder="Phone number">
+      </div>
+
+      <div class="field">
+        <label>WhatsApp Number</label>
+        <input id="businessWhatsapp" placeholder="WhatsApp number">
+      </div>
+
+      <div class="field">
+        <label>GST Number (Optional)</label>
+        <input id="businessGST" placeholder="GST Number">
+      </div>
+
+      <div class="field" style="grid-column:1/-1">
+        <label>Business Address</label>
+        <textarea id="businessAddress" placeholder="Shop address"></textarea>
+      </div>
+
+      <div class="field" style="grid-column:1/-1">
+        <label>Business Logo</label>
+        <input type="file" id="logoFile" accept="image/*" onchange="loadLogo(event)">
+        <img id="logoPreview" class="logo-preview">
+      </div>
+
+    </div>
+
+    <button class="success" onclick="saveSettings()">💾 Save Settings</button>
+    <button class="secondary" onclick="exportBackup()">⬇️ Backup Data</button>
+
+  </div>
+
+</section>
+
+
+<!-- PRINT QUOTATION -->
+<section id="printQuotation" class="hidden"></section>
+
 </div>
 
-<button onclick="clearAll()">Clear All</button>
-
-</div>
 
 <script>
 
-const tableBody = document.getElementById("tableBody");
+const STORAGE_KEY = "curtainAppData";
+const SETTINGS_KEY = "curtainAppSettings";
 
-for (let i = 1; i <= 20; i++) {
+let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+let settings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
+let editingId = null;
 
-    let row = document.createElement("tr");
+const types = [
+  "Cloth Curtain",
+  "Blackout Curtain",
+  "Zebra Blind",
+  "Roman Blind",
+  "Roller Blind",
+  "Wooden Blind",
+  "Venetian Blind",
+  "Bamboo Blind",
+  "Honeycomb Blind",
+  "Other"
+];
 
-    row.innerHTML = `
-        <td>${i}</td>
+function today(){
+  return new Date().toISOString().split("T")[0];
+}
 
-        <td>
-            <input type="text" placeholder="Hall">
-        </td>
+document.getElementById("measurementDate").value = today();
 
-        <td>
-            <input type="number"
-                   class="height"
-                   placeholder="cm"
-                   oninput="calculate()">
-        </td>
+function showPage(page){
 
-        <td>
-            <input type="number"
-                   class="width"
-                   placeholder="cm"
-                   oninput="calculate()">
-        </td>
+  document.querySelectorAll("section").forEach(s=>{
+    s.classList.add("hidden");
+  });
 
-        <td class="result">0.00</td>
+  document.getElementById(page).classList.remove("hidden");
+
+  if(page==="customers") displayCustomers();
+  if(page==="quotations") displayQuotations();
+  if(page==="settings") loadSettings();
+
+}
+
+function rebuildRows(){
+
+  const unit = document.getElementById("unit").value;
+  const body = document.getElementById("measurementRows");
+
+  body.innerHTML = "";
+
+  for(let i=1;i<=20;i++){
+
+    const row=document.createElement("tr");
+
+    let options = types.map(t =>
+      `<option value="${t}">${t}</option>`
+    ).join("");
+
+    row.innerHTML=`
+      <td>${i}</td>
+
+      <td>
+        <input class="area" placeholder="Hall / Bedroom">
+      </td>
+
+      <td>
+        <select class="type">
+          ${options}
+        </select>
+      </td>
+
+      <td>
+        <input class="height" type="number"
+          placeholder="${unit}"
+          oninput="calculate()">
+      </td>
+
+      <td>
+        <input class="width" type="number"
+          placeholder="${unit}"
+          oninput="calculate()">
+      </td>
+
+      <td class="sqft">0.00</td>
+
+      <td>
+        <input class="rate" type="number"
+          step="0.01"
+          placeholder="Rate"
+          oninput="calculate()">
+      </td>
+
+      <td class="amount">0.00</td>
     `;
 
-    tableBody.appendChild(row);
+    body.appendChild(row);
+  }
+
+  calculate();
 }
 
-function calculate() {
+function calculate(){
 
-    let heights = document.querySelectorAll(".height");
-    let widths = document.querySelectorAll(".width");
-    let results = document.querySelectorAll(".result");
+  const unit=document.getElementById("unit").value;
 
-    let total = 0;
+  const rows=document.querySelectorAll("#measurementRows tr");
 
-    for (let i = 0; i < 20; i++) {
+  let totalSqft=0;
+  let grandTotal=0;
 
-        let h = parseFloat(heights[i].value) || 0;
-        let w = parseFloat(widths[i].value) || 0;
+  const defaultRate =
+    parseFloat(document.getElementById("defaultRate").value) || 0;
 
-        let sqft = (h * w) / 929.0304;
+  rows.forEach(row=>{
 
-        results[i].innerText = sqft.toFixed(2);
+    const h=parseFloat(row.querySelector(".height").value)||0;
+    const w=parseFloat(row.querySelector(".width").value)||0;
 
-        total += sqft;
+    let sqft=0;
+
+    if(unit==="cm"){
+      sqft=(h*w)/929.0304;
+    }else{
+      sqft=(h*w)/144;
     }
 
-    document.getElementById("totalSqFt").innerText =
-        total.toFixed(2);
+    row.querySelector(".sqft").innerText=sqft.toFixed(2);
+
+    const rateInput=row.querySelector(".rate");
+
+    if(!rateInput.value && defaultRate){
+      rateInput.value=defaultRate;
+    }
+
+    const rate=parseFloat(rateInput.value)||0;
+    const amount=sqft*rate;
+
+    row.querySelector(".amount").innerText=amount.toFixed(2);
+
+    totalSqft+=sqft;
+    grandTotal+=amount;
+
+  });
+
+  document.getElementById("totalSqft").innerText=totalSqft.toFixed(2);
+  document.getElementById("grandTotal").innerText=grandTotal.toFixed(2);
 }
 
-function clearAll() {
+function getCurrentRecord(){
 
-    document.querySelectorAll("input").forEach(input => {
-        input.value = "";
-    });
+  const rows=document.querySelectorAll("#measurementRows tr");
 
-    document.querySelectorAll(".result").forEach(result => {
-        result.innerText = "0.00";
-    });
+  const measurements=[];
 
-    document.getElementById("totalSqFt").innerText = "0.00";
+  rows.forEach(row=>{
+
+    const h=parseFloat(row.querySelector(".height").value)||0;
+    const w=parseFloat(row.querySelector(".width").value)||0;
+
+    if(h>0 && w>0){
+
+      measurements.push({
+        area:row.querySelector(".area").value,
+        type:row.querySelector(".type").value,
+        height:h,
+        width:w,
+        sqft:parseFloat(row.querySelector(".sqft").innerText)||0,
+        rate:parseFloat(row.querySelector(".rate").value)||0,
+        amount:parseFloat(row.querySelector(".amount").innerText)||0
+      });
+
+    }
+
+  });
+
+  return {
+    id:editingId || Date.now(),
+    name:document.getElementById("customerName").value.trim(),
+    phone:document.getElementById("customerPhone").value.trim(),
+    address:document.getElementById("customerAddress").value.trim(),
+    date:document.getElementById("measurementDate").value,
+    unit:document.getElementById("unit").value,
+    measurements:measurements,
+    totalSqft:parseFloat(document.getElementById("totalSqft").innerText)||0,
+    grandTotal:parseFloat(document.getElementById("grandTotal").innerText)||0,
+    quoteNo:null
+  };
+
 }
+
+function saveMeasurement(){
+
+  const record=getCurrentRecord();
+
+  if(!record.name){
+    alert("Please enter Customer Name.");
+    return;
+  }
+
+  if(record.measurements.length===0){
+    alert("Please enter at least one measurement.");
+    return;
+  }
+
+  const index=data.findIndex(x=>x.id===record.id);
+
+  if(index>=0){
+    data[index]=record;
+  }else{
+    data.push(record);
+  }
+
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+
+  editingId=null;
+
+  alert("Measurement saved successfully!");
+
+  showPage("customers");
+}
+
+function createQuotation(){
+
+  const record=getCurrentRecord();
+
+  if(!record.name){
+    alert("Please enter Customer Name.");
+    return;
+  }
+
+  if(record.measurements.length===0){
+    alert("Please enter at least one measurement.");
+    return;
+  }
+
+  if(!record.quoteNo){
+    record.quoteNo=getNextQuoteNumber();
+  }
+
+  const index=data.findIndex(x=>x.id===record.id);
+
+  if(index>=0){
+    data[index]=record;
+  }else{
+    data.push(record);
+  }
+
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+
+  editingId=null;
+
+  openQuotation(record);
+
+}
+
+function getNextQuoteNumber(){
+
+  let max=0;
+
+  data.forEach(r=>{
+    if(r.quoteNo){
+      const n=parseInt(r.quoteNo.replace(/\D/g,""))||0;
+      if(n>max)max=n;
+    }
+  });
+
+  return "QT-"+String(max+1).padStart(4,"0");
+}
+
+function displayCustomers(){
+
+  const list=document.getElementById("customerList");
+  const search=document.getElementById("customerSearch").value.toLowerCase();
+
+  list.innerHTML="";
+
+  const filtered=data.filter(r=>
+    r.name.toLowerCase().includes(search) ||
+    r.phone.toLowerCase().includes(search)
+  );
+
+  if(filtered.length===0){
+    list.innerHTML=`<div class="card">No saved customers found.</div>`;
+    return;
+  }
+
+  filtered.slice().reverse().forEach(r=>{
+
+    const div=document.createElement("div");
+    div.className="customer";
+
+    div.innerHTML=`
+      <strong>${escapeHtml(r.name)}</strong>
+      <div class="small">
+        📞 ${escapeHtml(r.phone || "No phone")} |
+        📅 ${escapeHtml(r.date || "")}
+      </div>
+
+      <div style="margin-top:8px">
+        Total: <b>${r.totalSqft.toFixed(2)} Sq.Ft</b>
+        ${r.grandTotal>0 ? ` | ₹${r.grandTotal.toFixed(2)}` : ""}
+      </div>
+
+      <div style="margin-top:8px">
+        <button class="primary" onclick="editRecord(${r.id})">✏️ Edit</button>
+        <button class="success" onclick="addMeasurement(${r.id})">➕ New Measurement</button>
+        <button class="secondary" onclick="openQuotationById(${r.id})">🧾 Quotation</button>
+        <button class="danger" onclick="deleteRecord(${r.id})">🗑 Delete</button>
+      </div>
+    `;
+
+    list.appendChild(div);
+
+  });
+
+}
+
+function editRecord(id){
+
+  const r=data.find(x=>x.id===id);
+
+  if(!r)return;
+
+  editingId=r.id;
+
+  document.getElementById("customerName").value=r.name;
+  document.getElementById("customerPhone").value=r.phone;
+  document.getElementById("customerAddress").value=r.address;
+  document.getElementById("measurementDate").value=r.date;
+  document.getElementById("unit").value=r.unit;
+
+  rebuildRows();
+
+  const rows=document.querySelectorAll("#measurementRows tr");
+
+  r.measurements.forEach((m,i)=>{
+
+    if(!rows[i])return;
+
+    rows[i].querySelector(".area").value=m.area;
+    rows[i].querySelector(".type").value=m.type;
+    rows[i].querySelector(".height").value=m.height;
+    rows[i].querySelector(".width").value=m.width;
+    rows[i].querySelector(".rate").value=m.rate;
+
+  });
+
+  calculate();
+
+  showPage("measurement");
+
+}
+
+function addMeasurement(id){
+
+  const r=data.find(x=>x.id===id);
+
+  if(!r)return;
+
+  editingId=null;
+
+  document.getElementById("customerName").value=r.name;
+  document.getElementById("customerPhone").value=r.phone;
+  document.getElementById("customerAddress").value=r.address;
+  document.getElementById("measurementDate").value=today();
+  document.getElementById("unit").value=r.unit;
+
+  document.getElementById("defaultRate").value="";
+
+  rebuildRows();
+
+  showPage("measurement");
+
+}
+
+function deleteRecord(id){
+
+  if(!confirm("Delete this measurement?"))return;
+
+  data=data.filter(r=>r.id!==id);
+
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+
+  displayCustomers();
+
+}
+
+function displayQuotations(){
+
+  const list=document.getElementById("quotationList");
+
+  list.innerHTML="";
+
+  const quotes=data.filter(r=>r.quoteNo);
+
+  if(quotes.length===0){
+    list.innerHTML=`<div class="card">No quotations created yet.</div>`;
+    return;
+  }
+
+  quotes.slice().reverse().forEach(r=>{
+
+    const div=document.createElement("div");
+
+    div.className="quote";
+
+    div.innerHTML=`
+      <strong>${r.quoteNo}</strong>
+      <div>${escapeHtml(r.name)}</div>
+      <div class="small">${r.date || ""}</div>
+      <div style="margin-top:6px">
+        ${r.totalSqft.toFixed(2)} Sq.Ft
+        ${r.grandTotal>0 ? ` | ₹${r.grandTotal.toFixed(2)}` : ""}
+      </div>
+      <button class="primary" onclick="openQuotationById(${r.id})">
+        🧾 View / Print
+      </button>
+    `;
+
+    list.appendChild(div);
+
+  });
+
+}
+
+function openQuotationById(id){
+
+  const r=data.find(x=>x.id===id);
+
+  if(r)openQuotation(r);
+
+}
+
+function openQuotation(r){
+
+  const s=settings;
+
+  const rows=r.measurements.map((m,i)=>`
+    <tr>
+      <td>${i+1}</td>
+      <td>${escapeHtml(m.area)}</td>
+      <td>${escapeHtml(m.type)}</td>
+      <td>${m.height}</td>
+      <td>${m.width}</td>
+      <td>${m.sqft.toFixed(2)}</td>
+      <td>${m.rate ? "₹"+m.rate.toFixed(2) : "-"}</td>
+      <td>${m.amount ? "₹"+m.amount.toFixed(2) : "-"}</td>
+    </tr>
+  `).join("");
+
+  const logo=s.logo
+    ? `<img src="${s.logo}" style="max-width:120px;max-height:70px">`
+    : "";
+
+  const html=`
+    <div class="card" style="max-width:900px;margin:auto">
+
+      <div style="text-align:center">
+        ${logo}
+        <h1>${escapeHtml(s.businessName || "Curtain Measurement & Quotation")}</h1>
+        <div>${escapeHtml(s.businessAddress || "")}</div>
+        <div>${escapeHtml(s.businessPhone || "")}</div>
+        ${s.businessGST ? `<div>GST: ${escapeHtml(s.businessGST)}</div>` : ""}
+      </div>
+
+      <hr>
+
+      <div style="display:flex;justify-content:space-between">
+        <div>
+          <b>Customer:</b><br>
+          ${escapeHtml(r.name)}<br>
+          ${escapeHtml(r.phone)}<br>
+          ${escapeHtml(r.address)}
+        </div>
+
+        <div style="text-align:right">
+          <b>Quotation No:</b> ${r.quoteNo || getNextQuoteNumber()}<br>
+          <b>Date:</b> ${r.date}
+        </div>
+      </div>
+
+      <br>
+
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Area</th>
+            <th>Type</th>
+            <th>Height</th>
+            <th>Width</th>
+            <th>Sq.Ft</th>
+            <th>Rate</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+
+      <div style="text-align:right;margin-top:20px;font-size:18px">
+        <b>Total Sq.Ft: ${r.totalSqft.toFixed(2)}</b><br>
+        <b>Grand Total: ₹${r.grandTotal.toFixed(2)}</b>
+      </div>
+
+      <br>
+
+      <p>Thank you for your business.</p>
+
+      <div class="no-print" style="margin-top:20px">
+        <button class="primary" onclick="window.print()">🖨 Print / Save PDF</button>
+        <button class="success" onclick="shareQuotation(${r.id})">📱 Share WhatsApp</button>
+        <button class="secondary" onclick="showPage('quotations')">← Back</button>
+      </div>
+
+    </div>
+  `;
+
+  document.getElementById("printQuotation").innerHTML=html;
+
+  document.querySelectorAll("section").forEach(x=>x.classList.add("hidden"));
+
+  document.getElementById("printQuotation").classList.remove("hidden");
+
+}
+
+function shareQuotation(id){
+
+  const r=data.find(x=>x.id===id);
+
+  if(!r)return;
+
+  const text=
+`Quotation ${r.quoteNo || ""}
+Customer: ${r.name}
+Total Sq.Ft: ${r.totalSqft.toFixed(2)}
+Grand Total: ₹${r.grandTotal.toFixed(2)}
+
+Thank you.`;
+
+  const url="https://wa.me/?text="+encodeURIComponent(text);
+
+  window.open(url,"_blank");
+
+}
+
+function clearMeasurement(){
+
+  editingId=null;
+
+  document.getElementById("customerName").value="";
+  document.getElementById("customerPhone").value="";
+  document.getElementById("customerAddress").value="";
+  document.getElementById("measurementDate").value=today();
+  document.getElementById("defaultRate").value="";
+
+  rebuildRows();
+
+}
+
+function loadSettings(){
+
+  document.getElementById("businessName").value=settings.businessName||"";
+  document.getElementById("businessPhone").value=settings.businessPhone||"";
+  document.getElementById("businessWhatsapp").value=settings.businessWhatsapp||"";
+  document.getElementById("businessGST").value=settings.businessGST||"";
+  document.getElementById("businessAddress").value=settings.businessAddress||"";
+
+  document.getElementById("logoPreview").src=settings.logo||"";
+
+}
+
+function saveSettings(){
+
+  settings.businessName=document.getElementById("businessName").value;
+  settings.businessPhone=document.getElementById("businessPhone").value;
+  settings.businessWhatsapp=document.getElementById("businessWhatsapp").value;
+  settings.businessGST=document.getElementById("businessGST").value;
+  settings.businessAddress=document.getElementById("businessAddress").value;
+
+  localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));
+
+  updateWelcome();
+
+  alert("Business settings saved!");
+
+}
+
+function loadLogo(event){
+
+  const file=event.target.files[0];
+
+  if(!file)return;
+
+  const reader=new FileReader();
+
+  reader.onload=function(e){
+
+    settings.logo=e.target.result;
+
+    document.getElementById("logoPreview").src=e.target.result;
+
+    localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));
+
+  };
+
+  reader.readAsDataURL(file);
+
+}
+
+function updateWelcome(){
+
+  const name=settings.businessName || "your curtain shop";
+
+  document.getElementById("businessWelcome").innerText=
+    "Welcome to "+name+". Manage measurements and quotations easily.";
+
+}
+
+function exportBackup(){
+
+  const backup={
+    data:data,
+    settings:settings,
+    exportedAt:new Date().toISOString()
+  };
+
+  const blob=new Blob(
+    [JSON.stringify(backup,null,2)],
+    {type:"application/json"}
+  );
+
+  const url=URL.createObjectURL(blob);
+
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="curtain-app-backup.json";
+  a.click();
+
+  URL.revokeObjectURL(url);
+
+}
+
+function escapeHtml(value){
+
+  return String(value||"")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* START APP */
+
+rebuildRows();
+loadSettings();
+updateWelcome();
 
 </script>
 
