@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curtain Calculator</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f5f8;
+    margin: 0;
+    padding: 15px;
+}
+
+.container {
+    max-width: 700px;
+    margin: auto;
+    background: white;
+    padding: 18px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+h1 {
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: #1f4e78;
+    color: white;
+    padding: 8px;
+    font-size: 13px;
+}
+
+td {
+    border-bottom: 1px solid #ddd;
+    padding: 5px;
+    text-align: center;
+}
+
+input {
+    width: 90%;
+    padding: 7px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.result {
+    font-weight: bold;
+}
+
+.total {
+    margin-top: 15px;
+    padding: 12px;
+    background: #e8f3ff;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+button {
+    width: 100%;
+    margin-top: 12px;
+    padding: 11px;
+    border: none;
+    border-radius: 7px;
+    background: #1f4e78;
+    color: white;
+    font-size: 16px;
+}
+
+button:hover {
+    background: #163b5c;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>CURTAIN CALCULATOR</h1>
+<div class="subtitle">Height & Width in Centimeters</div>
+
+<table>
+<thead>
+<tr>
+<th>No.</th>
+<th>Area / Room</th>
+<th>Height (cm)</th>
+<th>Width (cm)</th>
+<th>Sq.Ft</th>
+</tr>
+</thead>
+
+<tbody id="tableBody">
+</tbody>
+</table>
+
+<div class="total">
+Total: <span id="totalSqFt">0.00</span> Sq.Ft
+</div>
+
+<button onclick="clearAll()">Clear All</button>
+
+</div>
+
+<script>
+
+const tableBody = document.getElementById("tableBody");
+
+for (let i = 1; i <= 20; i++) {
+
+    let row = document.createElement("tr");
+
+    row.innerHTML = `
+        <td>${i}</td>
+
+        <td>
+            <input type="text" placeholder="Hall">
+        </td>
+
+        <td>
+            <input type="number"
+                   class="height"
+                   placeholder="cm"
+                   oninput="calculate()">
+        </td>
+
+        <td>
+            <input type="number"
+                   class="width"
+                   placeholder="cm"
+                   oninput="calculate()">
+        </td>
+
+        <td class="result">0.00</td>
+    `;
+
+    tableBody.appendChild(row);
+}
+
+function calculate() {
+
+    let heights = document.querySelectorAll(".height");
+    let widths = document.querySelectorAll(".width");
+    let results = document.querySelectorAll(".result");
+
+    let total = 0;
+
+    for (let i = 0; i < 20; i++) {
+
+        let h = parseFloat(heights[i].value) || 0;
+        let w = parseFloat(widths[i].value) || 0;
+
+        let sqft = (h * w) / 929.0304;
+
+        results[i].innerText = sqft.toFixed(2);
+
+        total += sqft;
+    }
+
+    document.getElementById("totalSqFt").innerText =
+        total.toFixed(2);
+}
+
+function clearAll() {
+
+    document.querySelectorAll("input").forEach(input => {
+        input.value = "";
+    });
+
+    document.querySelectorAll(".result").forEach(result => {
+        result.innerText = "0.00";
+    });
+
+    document.getElementById("totalSqFt").innerText = "0.00";
+}
+
+</script>
+
+</body>
+</html>
