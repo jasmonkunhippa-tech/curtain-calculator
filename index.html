@@ -1,1205 +1,1327 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Curtain Measurement & Quotation</title>
-
 <style>
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f3f6f9;
-  color:#222;
-}
-.app{
-  max-width:1100px;
-  margin:auto;
-  padding:15px;
-}
-header{
-  background:#173f5f;
-  color:white;
-  padding:18px;
-  border-radius:14px;
-  margin-bottom:15px;
-}
-header h1{
-  margin:0;
-  font-size:24px;
-}
-header p{
-  margin:6px 0 0;
-  opacity:.85;
-}
-.card{
-  background:white;
-  padding:18px;
-  border-radius:14px;
-  margin-bottom:15px;
-  box-shadow:0 2px 10px rgba(0,0,0,.07);
-}
-h2{
-  margin-top:0;
-  color:#173f5f;
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:12px;
-}
-.field label{
-  display:block;
-  font-weight:bold;
-  margin-bottom:5px;
-  font-size:14px;
-}
-input,select,textarea{
-  width:100%;
-  padding:10px;
-  border:1px solid #ccc;
-  border-radius:8px;
-  font-size:15px;
-}
-textarea{min-height:70px;resize:vertical}
-button{
-  border:0;
-  border-radius:9px;
-  padding:11px 15px;
-  font-size:15px;
-  cursor:pointer;
-  margin:4px;
-}
-.primary{background:#173f5f;color:white}
-.success{background:#168a55;color:white}
-.danger{background:#c0392b;color:white}
-.secondary{background:#e9eef3;color:#173f5f}
-.menu{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
-}
-.menu button{
-  min-height:65px;
-  background:white;
-  border:1px solid #d9e0e6;
-  color:#173f5f;
-  font-weight:bold;
-  box-shadow:0 2px 7px rgba(0,0,0,.05);
-}
-.hidden{display:none}
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-bottom:12px;
-}
-.back{
-  background:#e9eef3;
-  color:#173f5f;
-}
-.table-wrap{
-  overflow-x:auto;
-}
-table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:850px;
-}
-th{
-  background:#173f5f;
-  color:white;
-  padding:9px;
-}
-td{
-  border-bottom:1px solid #ddd;
-  padding:6px;
-  text-align:center;
-}
-td input,td select{
-  min-width:100px;
-}
-.totalbox{
-  background:#eaf5ff;
-  padding:14px;
-  border-radius:10px;
-  margin-top:12px;
-  font-size:18px;
-  font-weight:bold;
-}
-.customer{
-  border:1px solid #ddd;
-  padding:13px;
-  border-radius:10px;
-  margin-bottom:10px;
-}
-.customer strong{
-  color:#173f5f;
-  font-size:17px;
-}
-.small{
-  color:#666;
-  font-size:13px;
-}
-.logo-preview{
-  max-width:130px;
-  max-height:80px;
-  display:block;
-  margin-top:8px;
-}
-.quote{
-  border:1px solid #ddd;
-  padding:15px;
-  border-radius:10px;
-  margin-bottom:10px;
-}
-@media(max-width:700px){
-  .grid{grid-template-columns:1fr}
-  .menu{grid-template-columns:repeat(2,1fr)}
-  header h1{font-size:20px}
-}
-@media print{
-  body{background:white}
-  .no-print{display:none!important}
-  .app{max-width:none}
-  .card{box-shadow:none;border:0}
-}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f5f7;color:#222}header{background:#111827;color:white;padding:16px}header h1{margin:0;font-size:21px}header p{margin:5px 0 0;font-size:13px;color:#d1d5db}nav{display:flex;gap:7px;overflow:auto;background:#fff;padding:9px;position:sticky;top:0;z-index:5;border-bottom:1px solid #ddd}nav button,.btn{border:0;border-radius:8px;padding:10px 13px;font-weight:700}nav button{white-space:nowrap;background:#e8edf3}nav button.active,.primary{background:#111827;color:#fff}.success{background:#15803d;color:#fff}.info{background:#2563eb;color:#fff}.danger{background:#dc2626;color:#fff}.secondary{background:#e5e7eb}.page{display:none}.page.active{display:block}main{max-width:1100px;margin:auto;padding:14px}.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px #0000000d}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.field label{display:block;font-size:12px;font-weight:bold;color:#555;margin-bottom:5px}input,select,textarea{width:100%;padding:10px;border:1px solid #ccd2da;border-radius:7px;font-size:14px;background:#fff}textarea{min-height:70px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border:1px solid #ddd;padding:7px;font-size:13px}th{background:#f1f3f5}.totalbox{max-width:420px;margin-left:auto;margin-top:12px}.totalrow{display:flex;justify-content:space-between;padding:6px}.grand{border-top:2px solid #111;font-size:19px;font-weight:bold;padding-top:10px}.empty{text-align:center;color:#777;padding:25px}.quote-paper{max-width:900px;margin:auto;background:#fff;padding:28px;border:1px solid #ddd}.qhead{display:flex;justify-content:space-between;gap:20px;border-bottom:2px solid #111;padding-bottom:14px}.qlogo{max-width:130px;max-height:80px;object-fit:contain}.qtitle{font-size:27px;font-weight:800;text-align:right}.qmeta{text-align:right;font-size:13px;line-height:1.7}.bill{background:#f7f8fa;padding:12px;border-radius:8px;margin:18px 0}.qtable th{background:#111;color:#fff}.sign{text-align:right;margin-top:45px}@media(max-width:700px){.grid{grid-template-columns:1fr}.qhead{flex-direction:column}.qtitle,.qmeta{text-align:left}.quote-paper{padding:14px}th,td{padding:5px;font-size:12px}}@media print{header,nav,.no-print{display:none!important}body{background:#fff}.quote-paper{border:0}}
 </style>
 </head>
-
 <body>
 
-<div class="app">
-
 <header>
-  <h1>🪟 Curtain Measurement & Quotation</h1>
-  <p>Professional Curtain Shop Management Tool</p>
+<h1 id="headName">Curtain Measurement & Quotation</h1>
+<p id="headSub">Measurement and quotation management</p>
 </header>
 
-<!-- HOME -->
-<section id="home">
-  <div class="card">
-    <h2>Welcome</h2>
-    <p id="businessWelcome">Start a new customer measurement or open a saved customer.</p>
-  </div>
+<nav>
+<button class="active" onclick="page('home',this)">Home</button>
+<button onclick="page('measurement',this)">Measurement</button>
+<button onclick="page('customers',this)">Customers</button>
+<button onclick="page('quotation',this)">Quotation</button>
+<button onclick="page('quotes',this)">Saved Quotations</button>
+<button onclick="page('settings',this)">Settings</button>
+</nav>
 
-  <div class="menu">
-    <button onclick="showPage('measurement')">➕<br>New Measurement</button>
-    <button onclick="showPage('customers')">👥<br>Saved Customers</button>
-    <button onclick="showPage('quotations')">🧾<br>Quotations</button>
-    <button onclick="showPage('settings')">⚙️<br>Settings</button>
-  </div>
+<main>
+
+<section id="home" class="page active">
+<div class="card">
+<h2>Welcome</h2>
+<p>Measurement and quotation are completely separate. Measurement is for internal work; the quotation shows only the items you choose.</p>
+<div class="actions">
+<button class="btn primary" onclick="newMeasurement()">＋ New Measurement</button>
+<button class="btn info" onclick="newQuotation()">＋ New Quotation</button>
+</div>
+</div>
 </section>
 
+<section id="measurement" class="page">
+<div class="card">
+<h2>Measurement Sheet</h2>
 
-<!-- MEASUREMENT -->
-<section id="measurement" class="hidden">
+<div class="grid">
+<div class="field"><label>Customer Name</label><input id="mName"></div>
+<div class="field"><label>Phone</label><input id="mPhone"></div>
+<div class="field"><label>Address</label><textarea id="mAddress"></textarea></div>
+<div class="field"><label>Date</label><input id="mDate" type="date"></div>
+<div class="field">
+<label>Unit</label>
+<select id="mUnit" onchange="renderM()">
+<option value="cm">Centimeter</option>
+<option value="inch">Inch</option>
+</select>
+</div>
+<div class="field"><label>Default Rate / Sq.Ft</label><input id="mRate" type="number" value="150" step=".01"></div>
+</div>
 
-  <div class="topbar">
-    <h2>New Measurement</h2>
-    <button class="back" onclick="showPage('home')">← Home</button>
-  </div>
+<table>
+<thead>
+<tr>
+<th>#</th><th>Area</th><th>Curtain Type</th><th>Height</th><th>Width</th><th>Sq.Ft</th><th>Rate</th><th>Amount</th><th></th>
+</tr>
+</thead>
+<tbody id="mRows"></tbody>
+</table>
 
-  <div class="card">
+<div class="actions">
+<button class="btn secondary" onclick="addM()">＋ Add Row</button>
+<button class="btn success" onclick="saveM()">Save Measurement</button>
+<button class="btn info" onclick="saveMQuote()">Save & Create Quotation</button>
+<button class="btn danger" onclick="clearM()">Clear</button>
+</div>
 
-    <div class="grid">
+<div class="totalbox">
+<div class="totalrow"><span>Total Sq.Ft</span><b id="mSq">0.00</b></div>
+<div class="totalrow"><span>Grand Total</span><b id="mTotal">₹0.00</b></div>
+</div>
 
-      <div class="field">
-        <label>Customer Name *</label>
-        <input id="customerName" type="text" placeholder="Customer name">
-      </div>
-
-      <div class="field">
-        <label>Phone Number</label>
-        <input id="customerPhone" type="tel" placeholder="Phone / WhatsApp">
-      </div>
-
-      <div class="field">
-        <label>Address</label>
-        <textarea id="customerAddress" placeholder="Customer address"></textarea>
-      </div>
-
-      <div class="field">
-        <label>Date</label>
-        <input id="measurementDate" type="date">
-      </div>
-
-      <div class="field">
-        <label>Measurement Unit</label>
-        <select id="unit" onchange="rebuildRows()">
-          <option value="cm">Centimeter (CM)</option>
-          <option value="inch">Inch</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label>Default Rate / Sq.Ft</label>
-        <input id="defaultRate" type="number" step="0.01" placeholder="Optional">
-      </div>
-
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>Measurements</h2>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>No.</th>
-            <th>Area / Room</th>
-            <th>Curtain Type</th>
-            <th>Height</th>
-            <th>Width</th>
-            <th>Sq.Ft</th>
-            <th>Rate</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody id="measurementRows"></tbody>
-      </table>
-    </div>
-
-    <div class="totalbox">
-      Total Sq.Ft: <span id="totalSqft">0.00</span>
-      <br>
-      Grand Total: ₹<span id="grandTotal">0.00</span>
-    </div>
-
-    <div style="margin-top:12px">
-      <button class="success" onclick="saveMeasurement()">💾 Save Measurement</button>
-      <button class="secondary" onclick="clearMeasurement()">🧹 Clear</button>
-      <button class="primary" onclick="createQuotation()">🧾 Save & Create Quotation</button>
-    </div>
-  </div>
-
+</div>
 </section>
 
+<section id="customers" class="page">
+<div class="card">
+<h2>Saved Customers / Measurements</h2>
+<input id="cs" placeholder="Search name / phone" oninput="renderCustomers()">
+</div>
 
-<!-- CUSTOMERS -->
-<section id="customers" class="hidden">
-
-  <div class="topbar">
-    <h2>Saved Customers</h2>
-    <button class="back" onclick="showPage('home')">← Home</button>
-  </div>
-
-  <div class="card">
-    <input id="customerSearch" type="text"
-           placeholder="🔍 Search customer name or phone..."
-           oninput="displayCustomers()">
-  </div>
-
-  <div id="customerList"></div>
-
+<div class="card">
+<table>
+<thead>
+<tr><th>Customer</th><th>Phone</th><th>Date</th><th>Sq.Ft</th><th>Amount</th><th>Actions</th></tr>
+</thead>
+<tbody id="cRows"></tbody>
+</table>
+</div>
 </section>
 
+<section id="quotation" class="page">
+<div class="card">
+<h2>Quotation</h2>
 
-<!-- QUOTATIONS -->
-<section id="quotations" class="hidden">
+<div class="grid">
+<div class="field"><label>Customer Name</label><input id="qName"></div>
+<div class="field"><label>Phone</label><input id="qPhone"></div>
+<div class="field"><label>Email</label><input id="qEmail"></div>
+<div class="field"><label>Date</label><input id="qDate" type="date"></div>
+<div class="field"><label>Address</label><textarea id="qAddress"></textarea></div>
+<div class="field"><label>Quotation No.</label><input id="qNo"></div>
+</div>
 
-  <div class="topbar">
-    <h2>Quotations</h2>
-    <button class="back" onclick="showPage('home')">← Home</button>
-  </div>
+<h3>Quotation Items</h3>
+<p style="font-size:12px;color:#777">
+Only these summarized items will appear in the quotation. Individual measurement rows will not appear.
+</p>
 
-  <div id="quotationList"></div>
+<table>
+<thead>
+<tr><th>#</th><th>Item Details</th><th>Qty</th><th>Unit</th><th>Rate</th><th>Amount</th><th></th></tr>
+</thead>
+<tbody id="qRows"></tbody>
+</table>
 
+<button class="btn secondary" onclick="addQ()">＋ Add Item</button>
+
+<div class="grid" style="margin-top:15px">
+<div class="field">
+<label>Discount Type</label>
+<select id="dType" onchange="calcQ()">
+<option value="percent">Percentage %</option>
+<option value="fixed">Fixed ₹</option>
+</select>
+</div>
+
+<div class="field">
+<label>Discount</label>
+<input id="discount" type="number" value="0" step=".01" oninput="calcQ()">
+</div>
+
+<div class="field">
+<label>GST %</label>
+<input id="gst" type="number" value="0" step=".01" oninput="calcQ()">
+</div>
+
+<div class="field">
+<label>Terms / Notes</label>
+<textarea id="terms"></textarea>
+</div>
+</div>
+
+<div class="totalbox">
+<div class="totalrow"><span>Subtotal</span><b id="sub">₹0.00</b></div>
+<div class="totalrow"><span>Discount</span><b id="disc">₹0.00</b></div>
+<div class="totalrow"><span>GST</span><b id="gstAmt">₹0.00</b></div>
+<div class="totalrow grand"><span>Grand Total</span><b id="grand">₹0.00</b></div>
+</div>
+
+<div class="actions">
+<button class="btn success" onclick="saveQ()">Save Quotation</button>
+<button class="btn info" onclick="previewQ()">Preview</button>
+<button class="btn secondary" onclick="newQuotation()">New</button>
+</div>
+
+</div>
 </section>
 
+<section id="quotes" class="page">
+<div class="card">
+<h2>Saved Quotations</h2>
+<input id="qs" placeholder="Search quotation / customer" oninput="renderQuotes()">
+</div>
 
-<!-- SETTINGS -->
-<section id="settings" class="hidden">
-
-  <div class="topbar">
-    <h2>Business Settings</h2>
-    <button class="back" onclick="showPage('home')">← Home</button>
-  </div>
-
-  <div class="card">
-
-    <div class="grid">
-
-      <div class="field">
-        <label>Business / Shop Name</label>
-        <input id="businessName" placeholder="Your Curtain Shop">
-      </div>
-
-      <div class="field">
-        <label>Phone</label>
-        <input id="businessPhone" placeholder="Phone number">
-      </div>
-
-      <div class="field">
-        <label>WhatsApp Number</label>
-        <input id="businessWhatsapp" placeholder="WhatsApp number">
-      </div>
-
-      <div class="field">
-        <label>GST Number (Optional)</label>
-        <input id="businessGST" placeholder="GST Number">
-      </div>
-
-      <div class="field" style="grid-column:1/-1">
-        <label>Business Address</label>
-        <textarea id="businessAddress" placeholder="Shop address"></textarea>
-      </div>
-
-      <div class="field" style="grid-column:1/-1">
-        <label>Business Logo</label>
-        <input type="file" id="logoFile" accept="image/*" onchange="loadLogo(event)">
-        <img id="logoPreview" class="logo-preview">
-      </div>
-
-    </div>
-
-    <button class="success" onclick="saveSettings()">💾 Save Settings</button>
-    <button class="secondary" onclick="exportBackup()">⬇️ Backup Data</button>
-
-  </div>
-
+<div class="card">
+<table>
+<thead>
+<tr><th>No.</th><th>Customer</th><th>Date</th><th>Total</th><th>Actions</th></tr>
+</thead>
+<tbody id="quoteList"></tbody>
+</table>
+</div>
 </section>
 
+<section id="preview" class="page">
+<div class="card no-print actions">
+<button class="btn primary" onclick="downloadPDF()">Download PDF</button>
+<button class="btn success" onclick="sharePDF()">Share PDF</button>
+<button class="btn secondary" onclick="page('quotes')">← Back</button>
+</div>
+<div id="paper" class="quote-paper"></div>
+</section>
 
-<!-- PRINT QUOTATION -->
-<section id="printQuotation" class="hidden"></section>
+<section id="settings" class="page">
+<div class="card">
+<h2>Business Settings</h2>
+
+<div class="grid">
+
+<div class="field">
+<label>Business / Shop Name</label>
+<input id="sName">
+</div>
+
+<div class="field">
+<label>Phone</label>
+<input id="sPhone">
+</div>
+
+<div class="field">
+<label>WhatsApp</label>
+<input id="sWa">
+</div>
+
+<div class="field">
+<label>Email</label>
+<input id="sEmail">
+</div>
+
+<div class="field">
+<label>GST Number</label>
+<input id="sGst">
+</div>
+
+<div class="field">
+<label>Address</label>
+<textarea id="sAddr"></textarea>
+</div>
+
+<div class="field">
+<label>Quotation Validity</label>
+<input id="sValid" value="7 days">
+</div>
+
+<div class="field">
+<label>Logo</label>
+<input id="logo" type="file" accept="image/*" onchange="logoLoad(this)">
+<img id="logoPrev" style="max-width:150px;max-height:70px;display:block;margin-top:8px">
+</div>
 
 </div>
 
+<div class="actions">
+<button class="btn success" onclick="saveSettings()">Save Settings</button>
+<button class="btn secondary" onclick="backup()">Backup Data</button>
+<button class="btn secondary" onclick="document.getElementById('restore').click()">Restore Backup</button>
+<input id="restore" type="file" accept=".json" style="display:none" onchange="restore(this)">
+</div>
+
+</div>
+</section>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
 
-const STORAGE_KEY = "curtainAppData";
-const SETTINGS_KEY = "curtainAppSettings";
+const KEY='curtain_app_v3';
 
-let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-let settings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
-let editingId = null;
+let S=JSON.parse(localStorage.getItem(KEY)||'null')||{
+settings:{
+name:'HomeStyle Curtains',
+phone:'',
+wa:'',
+email:'',
+gst:'',
+addr:'',
+valid:'7 days',
+logo:''
+},
+measurements:[],
+quotes:[]
+};
 
-const types = [
-  "Cloth Curtain",
-  "Blackout Curtain",
-  "Zebra Blind",
-  "Roman Blind",
-  "Roller Blind",
-  "Wooden Blind",
-  "Venetian Blind",
-  "Bamboo Blind",
-  "Honeycomb Blind",
-  "Other"
-];
+let M=[],Q=[],current=null;
+
+const $=id=>document.getElementById(id);
+
+const money=n=>'₹'+Number(n||0).toFixed(2);
+
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({
+'&':'&amp;',
+'<':'&lt;',
+'>':'&gt;',
+'"':'&quot;',
+"'":'&#39;'
+}[m]));
+
+function persist(){
+localStorage.setItem(KEY,JSON.stringify(S))
+}
 
 function today(){
-  return new Date().toISOString().split("T")[0];
+return new Date().toISOString().slice(0,10)
 }
 
-document.getElementById("measurementDate").value = today();
+function page(id,btn){
+document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+$(id).classList.add('active');
 
-function showPage(page){
+document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
 
-  document.querySelectorAll("section").forEach(s=>{
-    s.classList.add("hidden");
-  });
+if(btn)btn.classList.add('active');
 
-  document.getElementById(page).classList.remove("hidden");
-
-  if(page==="customers") displayCustomers();
-  if(page==="quotations") displayQuotations();
-  if(page==="settings") loadSettings();
-
+if(id==='customers')renderCustomers();
+if(id==='quotes')renderQuotes();
 }
 
-function rebuildRows(){
-
-  const unit = document.getElementById("unit").value;
-  const body = document.getElementById("measurementRows");
-
-  body.innerHTML = "";
-
-  for(let i=1;i<=20;i++){
-
-    const row=document.createElement("tr");
-
-    let options = types.map(t =>
-      `<option value="${t}">${t}</option>`
-    ).join("");
-
-    row.innerHTML=`
-      <td>${i}</td>
-
-      <td>
-        <input class="area" placeholder="Hall / Bedroom">
-      </td>
-
-      <td>
-        <select class="type">
-          ${options}
-        </select>
-      </td>
-
-      <td>
-        <input class="height" type="number"
-          placeholder="${unit}"
-          oninput="calculate()">
-      </td>
-
-      <td>
-        <input class="width" type="number"
-          placeholder="${unit}"
-          oninput="calculate()">
-      </td>
-
-      <td class="sqft">0.00</td>
-
-      <td>
-        <input class="rate" type="number"
-          step="0.01"
-          placeholder="Rate"
-          oninput="calculate()">
-      </td>
-
-      <td class="amount">0.00</td>
-    `;
-
-    body.appendChild(row);
-  }
-
-  calculate();
+function nav(id){
+let b=[...document.querySelectorAll('nav button')].find(x=>
+x.textContent.toLowerCase().includes(id==='quotation'?'quotation':id)
+);
+page(id,b)
 }
 
-function calculate(){
+function sqft(h,w,u){
+h=+h||0;
+w=+w||0;
 
-  const unit=document.getElementById("unit").value;
-
-  const rows=document.querySelectorAll("#measurementRows tr");
-
-  let totalSqft=0;
-  let grandTotal=0;
-
-  const defaultRate =
-    parseFloat(document.getElementById("defaultRate").value) || 0;
-
-  rows.forEach(row=>{
-
-    const h=parseFloat(row.querySelector(".height").value)||0;
-    const w=parseFloat(row.querySelector(".width").value)||0;
-
-    let sqft=0;
-
-    if(unit==="cm"){
-      sqft=(h*w)/929.0304;
-    }else{
-      sqft=(h*w)/144;
-    }
-
-    row.querySelector(".sqft").innerText=sqft.toFixed(2);
-
-    const rateInput=row.querySelector(".rate");
-
-    if(!rateInput.value && defaultRate){
-      rateInput.value=defaultRate;
-    }
-
-    const rate=parseFloat(rateInput.value)||0;
-    const amount=sqft*rate;
-
-    row.querySelector(".amount").innerText=amount.toFixed(2);
-
-    totalSqft+=sqft;
-    grandTotal+=amount;
-
-  });
-
-  document.getElementById("totalSqft").innerText=totalSqft.toFixed(2);
-  document.getElementById("grandTotal").innerText=grandTotal.toFixed(2);
+return u==='cm'
+?h*w/929.0304
+:h*w/144
 }
 
-function getCurrentRecord(){
+function newMeasurement(){
+clearM(false);
+$('mDate').value=today();
 
-  const rows=document.querySelectorAll("#measurementRows tr");
+for(let i=0;i<5;i++)addM();
 
-  const measurements=[];
-
-  rows.forEach(row=>{
-
-    const h=parseFloat(row.querySelector(".height").value)||0;
-    const w=parseFloat(row.querySelector(".width").value)||0;
-
-    if(h>0 && w>0){
-
-      measurements.push({
-        area:row.querySelector(".area").value,
-        type:row.querySelector(".type").value,
-        height:h,
-        width:w,
-        sqft:parseFloat(row.querySelector(".sqft").innerText)||0,
-        rate:parseFloat(row.querySelector(".rate").value)||0,
-        amount:parseFloat(row.querySelector(".amount").innerText)||0
-      });
-
-    }
-
-  });
-
-  return {
-    id:editingId || Date.now(),
-    name:document.getElementById("customerName").value.trim(),
-    phone:document.getElementById("customerPhone").value.trim(),
-    address:document.getElementById("customerAddress").value.trim(),
-    date:document.getElementById("measurementDate").value,
-    unit:document.getElementById("unit").value,
-    measurements:measurements,
-    totalSqft:parseFloat(document.getElementById("totalSqft").innerText)||0,
-    grandTotal:parseFloat(document.getElementById("grandTotal").innerText)||0,
-    quoteNo:null
-  };
-
+nav('measurement')
 }
 
-function saveMeasurement(){
+function addM(x={}){
+M.push({
+area:x.area||'',
+type:x.type||'Curtain',
+h:x.h||'',
+w:x.w||'',
+rate:x.rate??+$('mRate').value||150
+});
 
-  const record=getCurrentRecord();
-
-  if(!record.name){
-    alert("Please enter Customer Name.");
-    return;
-  }
-
-  if(record.measurements.length===0){
-    alert("Please enter at least one measurement.");
-    return;
-  }
-
-  const index=data.findIndex(x=>x.id===record.id);
-
-  if(index>=0){
-    data[index]=record;
-  }else{
-    data.push(record);
-  }
-
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
-
-  editingId=null;
-
-  alert("Measurement saved successfully!");
-
-  showPage("customers");
+renderM()
 }
 
-function createQuotation(){
+function renderM(){
 
-  const record=getCurrentRecord();
+let u=$('mUnit').value;
 
-  if(!record.name){
-    alert("Please enter Customer Name.");
-    return;
-  }
+let total=0,amt=0;
 
-  if(record.measurements.length===0){
-    alert("Please enter at least one measurement.");
-    return;
-  }
+$('mRows').innerHTML=M.map((r,i)=>{
 
-  if(!record.quoteNo){
-    record.quoteNo=getNextQuoteNumber();
-  }
+let sf=sqft(r.h,r.w,u);
 
-  const index=data.findIndex(x=>x.id===record.id);
+let a=sf*(+r.rate||0);
 
-  if(index>=0){
-    data[index]=record;
-  }else{
-    data.push(record);
-  }
+total+=sf;
+amt+=a;
 
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+return `<tr>
 
-  editingId=null;
+<td>${i+1}</td>
 
-  openQuotation(record);
+<td>
+<input value="${esc(r.area)}"
+oninput="M[${i}].area=this.value">
+</td>
+
+<td>
+<input value="${esc(r.type)}"
+oninput="M[${i}].type=this.value">
+</td>
+
+<td>
+<input type="number"
+value="${r.h}"
+oninput="M[${i}].h=this.value;renderM()">
+</td>
+
+<td>
+<input type="number"
+value="${r.w}"
+oninput="M[${i}].w=this.value;renderM()">
+</td>
+
+<td>${sf.toFixed(2)}</td>
+
+<td>
+<input type="number"
+value="${r.rate}"
+oninput="M[${i}].rate=this.value;renderM()">
+</td>
+
+<td>${money(a)}</td>
+
+<td>
+<button class="btn danger"
+onclick="M.splice(${i},1);renderM()">×</button>
+</td>
+
+</tr>`
+
+}).join('');
+
+$('mSq').textContent=total.toFixed(2);
+$('mTotal').textContent=money(amt)
+}
+
+function clearM(go=true){
+
+M=[];
+
+$('mName').value='';
+$('mPhone').value='';
+$('mAddress').value='';
+$('mDate').value=today();
+$('mUnit').value='cm';
+$('mRate').value=150;
+
+renderM();
+
+if(go)nav('measurement')
+}
+
+function makeM(){
+
+let u=$('mUnit').value;
+
+let rows=M.map(r=>({
+
+...r,
+
+sqft:sqft(r.h,r.w,u),
+
+amount:sqft(r.h,r.w,u)*(+r.rate||0)
+
+}));
+
+return {
+
+id:Date.now(),
+
+name:$('mName').value.trim(),
+
+phone:$('mPhone').value.trim(),
+
+address:$('mAddress').value.trim(),
+
+date:$('mDate').value,
+
+unit:u,
+
+rows,
+
+totalSqft:rows.reduce((a,r)=>a+r.sqft,0),
+
+grandTotal:rows.reduce((a,r)=>a+r.amount,0)
 
 }
 
-function getNextQuoteNumber(){
-
-  let max=0;
-
-  data.forEach(r=>{
-    if(r.quoteNo){
-      const n=parseInt(r.quoteNo.replace(/\D/g,""))||0;
-      if(n>max)max=n;
-    }
-  });
-
-  return "QT-"+String(max+1).padStart(4,"0");
 }
 
-function displayCustomers(){
+function saveM(){
 
-  const list=document.getElementById("customerList");
-  const search=document.getElementById("customerSearch").value.toLowerCase();
+let r=makeM();
 
-  list.innerHTML="";
+if(!r.name)
+return alert('Please enter customer name.');
 
-  const filtered=data.filter(r=>
-    r.name.toLowerCase().includes(search) ||
-    r.phone.toLowerCase().includes(search)
-  );
+S.measurements.push(r);
 
-  if(filtered.length===0){
-    list.innerHTML=`<div class="card">No saved customers found.</div>`;
-    return;
-  }
+persist();
 
-  filtered.slice().reverse().forEach(r=>{
+alert('Measurement saved.');
 
-    const div=document.createElement("div");
-    div.className="customer";
+renderCustomers()
+}
 
-    div.innerHTML=`
-      <strong>${escapeHtml(r.name)}</strong>
-      <div class="small">
-        📞 ${escapeHtml(r.phone || "No phone")} |
-        📅 ${escapeHtml(r.date || "")}
-      </div>
+function saveMQuote(){
 
-      <div style="margin-top:8px">
-        Total: <b>${r.totalSqft.toFixed(2)} Sq.Ft</b>
-        ${r.grandTotal>0 ? ` | ₹${r.grandTotal.toFixed(2)}` : ""}
-      </div>
+let r=makeM();
 
-      <div style="margin-top:8px">
-        <button class="primary" onclick="editRecord(${r.id})">✏️ Edit</button>
-        <button class="success" onclick="addMeasurement(${r.id})">➕ New Measurement</button>
-        <button class="secondary" onclick="openQuotationById(${r.id})">🧾 Quotation</button>
-        <button class="danger" onclick="deleteRecord(${r.id})">🗑 Delete</button>
-      </div>
-    `;
+if(!r.name)
+return alert('Please enter customer name.');
 
-    list.appendChild(div);
+S.measurements.push(r);
 
-  });
+persist();
+
+newQuotation();
+
+$('qName').value=r.name;
+$('qPhone').value=r.phone;
+$('qAddress').value=r.address;
+
+Q=[{
+name:'Curtain',
+qty:r.totalSqft,
+unit:'Sq.Ft',
+rate:r.totalSqft?r.grandTotal/r.totalSqft:0
+}];
+
+renderQ();
+calcQ()
+}
+
+function editM(id){
+
+let r=S.measurements.find(x=>x.id===id);
+
+if(!r)return;
+
+$('mName').value=r.name;
+$('mPhone').value=r.phone;
+$('mAddress').value=r.address;
+$('mDate').value=r.date;
+$('mUnit').value=r.unit;
+
+M=r.rows.map(x=>({
+area:x.area,
+type:x.type,
+h:x.h,
+w:x.w,
+rate:x.rate
+}));
+
+renderM();
+nav('measurement')
+}
+
+function renderCustomers(){
+
+let q=($('cs')?.value||'').toLowerCase();
+
+let a=S.measurements.filter(r=>
+(r.name+' '+r.phone).toLowerCase().includes(q)
+);
+
+$('cRows').innerHTML=a.length?a.map(r=>`
+
+<tr>
+
+<td>${esc(r.name)}</td>
+<td>${esc(r.phone)}</td>
+<td>${r.date}</td>
+<td>${r.totalSqft.toFixed(2)}</td>
+<td>${money(r.grandTotal)}</td>
+
+<td>
+
+<button class="btn secondary"
+onclick="editM(${r.id})">Edit</button>
+
+<button class="btn info"
+onclick="qFromM(${r.id})">Quotation</button>
+
+<button class="btn danger"
+onclick="delM(${r.id})">Delete</button>
+
+</td>
+
+</tr>
+
+`).join(''):
+
+`<tr>
+<td colspan="6" class="empty">
+No saved measurements
+</td>
+</tr>`
+}
+
+function delM(id){
+
+if(confirm('Delete measurement?')){
+
+S.measurements=S.measurements.filter(x=>x.id!==id);
+
+persist();
+
+renderCustomers()
+
+}
+}
+
+function newQuotation(){
+
+Q=[{
+name:'',
+qty:1,
+unit:'Sq.Ft',
+rate:0
+}];
+
+$('qName').value='';
+$('qPhone').value='';
+$('qEmail').value='';
+$('qAddress').value='';
+$('qDate').value=today();
+
+$('qNo').value='QT-'+String(S.quotes.length+1).padStart(4,'0');
+
+$('dType').value='percent';
+$('discount').value=0;
+$('gst').value=0;
+$('terms').value='';
+
+renderQ();
+calcQ();
+
+nav('quotation')
+}
+
+function qFromM(id){
+
+let r=S.measurements.find(x=>x.id===id);
+
+if(!r)return;
+
+newQuotation();
+
+$('qName').value=r.name;
+$('qPhone').value=r.phone;
+$('qAddress').value=r.address;
+
+let g={};
+
+r.rows.forEach(x=>{
+
+let k=x.type||'Curtain';
+
+if(!g[k])
+g[k]={
+name:k,
+qty:0,
+unit:'Sq.Ft',
+rate:x.rate||0
+};
+
+g[k].qty+=x.sqft
+
+});
+
+Q=Object.values(g);
+
+if(!Q.length)
+Q=[{
+name:'Curtain',
+qty:r.totalSqft,
+unit:'Sq.Ft',
+rate:0
+}];
+
+renderQ();
+calcQ()
+}
+
+function addQ(x={}){
+
+Q.push({
+name:x.name||'',
+qty:x.qty??1,
+unit:x.unit||'Sq.Ft',
+rate:x.rate??0
+});
+
+renderQ();
+calcQ()
+}
+
+function renderQ(){
+
+$('qRows').innerHTML=Q.map((x,i)=>`
+
+<tr>
+
+<td>${i+1}</td>
+
+<td>
+<input value="${esc(x.name)}"
+oninput="Q[${i}].name=this.value">
+</td>
+
+<td>
+<input type="number"
+value="${x.qty}"
+oninput="Q[${i}].qty=this.value;calcQ()">
+</td>
+
+<td>
+<input value="${esc(x.unit)}"
+oninput="Q[${i}].unit=this.value">
+</td>
+
+<td>
+<input type="number"
+value="${x.rate}"
+oninput="Q[${i}].rate=this.value;calcQ()">
+</td>
+
+<td>
+${money((+x.qty||0)*(+x.rate||0))}
+</td>
+
+<td>
+<button class="btn danger"
+onclick="Q.splice(${i},1);renderQ();calcQ()">×</button>
+</td>
+
+</tr>
+
+`).join('')
+}
+
+function calcQ(){
+
+renderQ();
+
+let sub=Q.reduce(
+(a,x)=>a+(+x.qty||0)*(+x.rate||0),0
+);
+
+let d=+$('discount').value||0;
+
+let disc=$('dType').value==='percent'
+?sub*d/100
+:d;
+
+let tax=Math.max(0,sub-disc);
+
+let g=tax*(+$('gst').value||0)/100;
+
+$('sub').textContent=money(sub);
+$('disc').textContent=money(disc);
+$('gstAmt').textContent=money(g);
+$('grand').textContent=money(tax+g)
+}
+
+function makeQ(){
+
+let sub=Q.reduce(
+(a,x)=>a+(+x.qty||0)*(+x.rate||0),0
+);
+
+let d=+$('discount').value||0;
+
+let disc=$('dType').value==='percent'
+?sub*d/100
+:d;
+
+let tax=Math.max(0,sub-disc);
+
+let g=tax*(+$('gst').value||0)/100;
+
+return {
+
+id:Date.now(),
+
+no:$('qNo').value,
+
+name:$('qName').value.trim(),
+
+phone:$('qPhone').value.trim(),
+
+email:$('qEmail').value.trim(),
+
+address:$('qAddress').value.trim(),
+
+date:$('qDate').value,
+
+items:JSON.parse(JSON.stringify(Q)),
+
+dtype:$('dType').value,
+
+dinput:d,
+
+discount:disc,
+
+gstrate:+$('gst').value||0,
+
+gst:g,
+
+subtotal:sub,
+
+total:tax+g,
+
+terms:$('terms').value
 
 }
 
-function editRecord(id){
+}
 
-  const r=data.find(x=>x.id===id);
+function saveQ(){
 
-  if(!r)return;
+let r=makeQ();
 
-  editingId=r.id;
+if(!r.name)
+return alert('Please enter customer name.');
 
-  document.getElementById("customerName").value=r.name;
-  document.getElementById("customerPhone").value=r.phone;
-  document.getElementById("customerAddress").value=r.address;
-  document.getElementById("measurementDate").value=r.date;
-  document.getElementById("unit").value=r.unit;
+let i=S.quotes.findIndex(x=>x.no===r.no);
 
-  rebuildRows();
+if(i>=0)
+S.quotes[i]=r;
+else
+S.quotes.push(r);
 
-  const rows=document.querySelectorAll("#measurementRows tr");
+persist();
 
-  r.measurements.forEach((m,i)=>{
+current=r;
 
-    if(!rows[i])return;
+renderQuotes();
 
-    rows[i].querySelector(".area").value=m.area;
-    rows[i].querySelector(".type").value=m.type;
-    rows[i].querySelector(".height").value=m.height;
-    rows[i].querySelector(".width").value=m.width;
-    rows[i].querySelector(".rate").value=m.rate;
+previewQ()
+}
 
-  });
+function loadQ(id){
 
-  calculate();
+let r=S.quotes.find(x=>x.id===id);
 
-  showPage("measurement");
+if(!r)return;
+
+$('qName').value=r.name;
+$('qPhone').value=r.phone;
+$('qEmail').value=r.email;
+$('qAddress').value=r.address;
+$('qDate').value=r.date;
+$('qNo').value=r.no;
+
+$('dType').value=r.dtype;
+$('discount').value=r.dinput;
+$('gst').value=r.gstrate;
+$('terms').value=r.terms||'';
+
+Q=JSON.parse(JSON.stringify(r.items));
+
+renderQ();
+calcQ();
+
+nav('quotation')
+}
+
+function renderQuotes(){
+
+let q=($('qs')?.value||'').toLowerCase();
+
+let a=S.quotes.filter(r=>
+(r.no+' '+r.name).toLowerCase().includes(q)
+);
+
+$('quoteList').innerHTML=a.length?a.map(r=>`
+
+<tr>
+
+<td>${esc(r.no)}</td>
+<td>${esc(r.name)}</td>
+<td>${r.date}</td>
+<td>${money(r.total)}</td>
+
+<td>
+
+<button class="btn info"
+onclick="loadQ(${r.id})">Edit</button>
+
+<button class="btn secondary"
+onclick="viewQ(${r.id})">View</button>
+
+<button class="btn danger"
+onclick="delQ(${r.id})">Delete</button>
+
+</td>
+
+</tr>
+
+`).join(''):
+
+`<tr>
+<td colspan="5" class="empty">
+No saved quotations
+</td>
+</tr>`
+}
+
+function delQ(id){
+
+if(confirm('Delete quotation?')){
+
+S.quotes=S.quotes.filter(x=>x.id!==id);
+
+persist();
+
+renderQuotes()
+
+}
+}
+
+function previewQ(){
+
+let r=makeQ();
+
+if(!r.name)
+return alert('Please enter customer name.');
+
+current=r;
+
+$('paper').innerHTML=qHTML(r);
+
+page('preview')
+}
+
+function viewQ(id){
+
+let r=S.quotes.find(x=>x.id===id);
+
+if(!r)return;
+
+current=r;
+
+$('paper').innerHTML=qHTML(r);
+
+page('preview')
+}
+
+function qHTML(r){
+
+let s=S.settings;
+
+return `<div id="pdfDoc">
+
+<div class="qhead">
+
+<div>
+
+${s.logo?`<img class="qlogo" src="${s.logo}">`:''}
+
+<h2>${esc(s.name)}</h2>
+
+<div>${esc(s.addr)}</div>
+<div>${esc(s.phone)}</div>
+<div>${esc(s.email)}</div>
+
+${s.gst?`<div>GST: ${esc(s.gst)}</div>`:''}
+
+</div>
+
+<div>
+
+<div class="qtitle">QUOTATION</div>
+
+<div class="qmeta">
+
+<b>No:</b> ${esc(r.no)}<br>
+
+<b>Date:</b> ${esc(r.date)}
+
+</div>
+
+</div>
+
+</div>
+
+<div class="bill">
+
+<b>Bill To</b><br>
+
+${esc(r.name)}<br>
+
+${esc(r.address)}
+
+${r.phone?`<br>${esc(r.phone)}`:''}
+
+${r.email?`<br>${esc(r.email)}`:''}
+
+</div>
+
+<table class="qtable">
+
+<thead>
+
+<tr>
+<th>S.No</th>
+<th>Item Details</th>
+<th>Quantity</th>
+<th>Price</th>
+<th>Total</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+${r.items.map((x,i)=>`
+
+<tr>
+
+<td>${i+1}</td>
+
+<td>${esc(x.name)}</td>
+
+<td>${(+x.qty||0).toFixed(2)} ${esc(x.unit)}</td>
+
+<td>${money(x.rate)}</td>
+
+<td>${money((+x.qty||0)*(+x.rate||0))}</td>
+
+</tr>
+
+`).join('')}
+
+</tbody>
+
+</table>
+
+<div class="totalbox">
+
+<div class="totalrow">
+<span>Subtotal</span>
+<b>${money(r.subtotal)}</b>
+</div>
+
+<div class="totalrow">
+<span>Discount</span>
+<b>${money(r.discount)}</b>
+</div>
+
+<div class="totalrow">
+<span>GST (${r.gstrate}%)</span>
+<b>${money(r.gst)}</b>
+</div>
+
+<div class="totalrow grand">
+<span>Grand Total</span>
+<b>${money(r.total)}</b>
+</div>
+
+</div>
+
+<div style="margin-top:25px">
+
+<b>Terms / Notes</b>
+
+<div style="white-space:pre-wrap">
+
+${esc(r.terms||('Quotation valid for '+(s.valid||'7 days')+'.'))}
+
+</div>
+
+</div>
+
+<div class="sign">
+
+For <b>${esc(s.name)}</b>
+
+<br><br>
+
+Authorized Signature
+
+</div>
+
+</div>`
+}
+
+async function makePDF(){
+
+let el=$('pdfDoc');
+
+if(!el)
+throw Error('Preview not found');
+
+let c=await html2canvas(el,{
+scale:2,
+backgroundColor:'#fff',
+useCORS:true,
+logging:false
+});
+
+let pdf=new jspdf.jsPDF('p','mm','a4');
+
+let w=210,h=297,m=8;
+
+let imgW=w-m*2;
+
+let pageH=Math.floor(
+c.width*((h-m*2)/imgW)
+);
+
+let y=0,n=0;
+
+while(y<c.height){
+
+let sh=Math.min(pageH,c.height-y);
+
+let sl=document.createElement('canvas');
+
+sl.width=c.width;
+sl.height=sh;
+
+sl.getContext('2d').drawImage(
+c,
+0,y,
+c.width,sh,
+0,0,
+c.width,sh
+);
+
+if(n)
+pdf.addPage();
+
+pdf.addImage(
+sl.toDataURL('image/jpeg',.95),
+'JPEG',
+m,
+m,
+imgW,
+sh*imgW/c.width
+);
+
+y+=sh;
+n++
+}
+
+return pdf
+}
+
+function fname(){
+
+return (current?.no||'Quotation')+
+'_'+
+(current?.name||'Customer')
+.replace(/[^a-z0-9]/gi,'_')+
+'.pdf'
 
 }
 
-function addMeasurement(id){
+async function downloadPDF(){
 
-  const r=data.find(x=>x.id===id);
+try{
 
-  if(!r)return;
+(await makePDF()).save(fname())
 
-  editingId=null;
+}catch(e){
 
-  document.getElementById("customerName").value=r.name;
-  document.getElementById("customerPhone").value=r.phone;
-  document.getElementById("customerAddress").value=r.address;
-  document.getElementById("measurementDate").value=today();
-  document.getElementById("unit").value=r.unit;
+console.error(e);
 
-  document.getElementById("defaultRate").value="";
-
-  rebuildRows();
-
-  showPage("measurement");
+alert('PDF creation failed. Please try again.')
 
 }
 
-function deleteRecord(id){
+}
 
-  if(!confirm("Delete this measurement?"))return;
+async function sharePDF(){
 
-  data=data.filter(r=>r.id!==id);
+try{
 
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+let pdf=await makePDF();
 
-  displayCustomers();
+let blob=pdf.output('blob');
+
+let file=new File(
+[blob],
+fname(),
+{type:'application/pdf'}
+);
+
+if(navigator.canShare&&navigator.canShare({files:[file]})){
+
+try{
+
+await navigator.share({
+files:[file],
+title:current?.no||'Quotation'
+});
+
+return;
+
+}catch(e){
+
+if(e.name==='AbortError')
+return;
 
 }
 
-function displayQuotations(){
+}
 
-  const list=document.getElementById("quotationList");
+let u=URL.createObjectURL(blob);
 
-  list.innerHTML="";
+let a=document.createElement('a');
 
-  const quotes=data.filter(r=>r.quoteNo);
+a.href=u;
 
-  if(quotes.length===0){
-    list.innerHTML=`<div class="card">No quotations created yet.</div>`;
-    return;
-  }
+a.download=fname();
 
-  quotes.slice().reverse().forEach(r=>{
+a.click();
 
-    const div=document.createElement("div");
+setTimeout(
+()=>URL.revokeObjectURL(u),
+3000
+);
 
-    div.className="quote";
+alert('PDF downloaded. Open WhatsApp and attach the PDF.')
 
-    div.innerHTML=`
-      <strong>${r.quoteNo}</strong>
-      <div>${escapeHtml(r.name)}</div>
-      <div class="small">${r.date || ""}</div>
-      <div style="margin-top:6px">
-        ${r.totalSqft.toFixed(2)} Sq.Ft
-        ${r.grandTotal>0 ? ` | ₹${r.grandTotal.toFixed(2)}` : ""}
-      </div>
-      <button class="primary" onclick="openQuotationById(${r.id})">
-        🧾 View / Print
-      </button>
-    `;
+}catch(e){
 
-    list.appendChild(div);
+console.error(e);
 
-  });
+alert('PDF sharing failed. Please use Download PDF.')
 
 }
 
-function openQuotationById(id){
-
-  const r=data.find(x=>x.id===id);
-
-  if(r)openQuotation(r);
-
 }
 
-function openQuotation(r){
+function logoLoad(i){
 
-  const s=settings;
+let f=i.files[0];
 
-  const rows=r.measurements.map((m,i)=>`
-    <tr>
-      <td>${i+1}</td>
-      <td>${escapeHtml(m.area)}</td>
-      <td>${escapeHtml(m.type)}</td>
-      <td>${m.height}</td>
-      <td>${m.width}</td>
-      <td>${m.sqft.toFixed(2)}</td>
-      <td>${m.rate ? "₹"+m.rate.toFixed(2) : "-"}</td>
-      <td>${m.amount ? "₹"+m.amount.toFixed(2) : "-"}</td>
-    </tr>
-  `).join("");
+if(!f)return;
 
-  const logo=s.logo
-    ? `<img src="${s.logo}" style="max-width:120px;max-height:70px">`
-    : "";
+let r=new FileReader();
 
-  const html=`
-    <div class="card" style="max-width:900px;margin:auto">
+r.onload=e=>{
 
-      <div style="text-align:center">
-        ${logo}
-        <h1>${escapeHtml(s.businessName || "Curtain Measurement & Quotation")}</h1>
-        <div>${escapeHtml(s.businessAddress || "")}</div>
-        <div>${escapeHtml(s.businessPhone || "")}</div>
-        ${s.businessGST ? `<div>GST: ${escapeHtml(s.businessGST)}</div>` : ""}
-      </div>
+S.settings.logo=e.target.result;
 
-      <hr>
+$('logoPrev').src=e.target.result
 
-      <div style="display:flex;justify-content:space-between">
-        <div>
-          <b>Customer:</b><br>
-          ${escapeHtml(r.name)}<br>
-          ${escapeHtml(r.phone)}<br>
-          ${escapeHtml(r.address)}
-        </div>
+};
 
-        <div style="text-align:right">
-          <b>Quotation No:</b> ${r.quoteNo || getNextQuoteNumber()}<br>
-          <b>Date:</b> ${r.date}
-        </div>
-      </div>
-
-      <br>
-
-      <table style="width:100%;border-collapse:collapse">
-        <thead>
-          <tr>
-            <th>No.</th>
-            <th>Area</th>
-            <th>Type</th>
-            <th>Height</th>
-            <th>Width</th>
-            <th>Sq.Ft</th>
-            <th>Rate</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody>${rows}</tbody>
-      </table>
-
-      <div style="text-align:right;margin-top:20px;font-size:18px">
-        <b>Total Sq.Ft: ${r.totalSqft.toFixed(2)}</b><br>
-        <b>Grand Total: ₹${r.grandTotal.toFixed(2)}</b>
-      </div>
-
-      <br>
-
-      <p>Thank you for your business.</p>
-
-      <div class="no-print" style="margin-top:20px">
-        <button class="primary" onclick="window.print()">🖨 Print / Save PDF</button>
-        <button class="success" onclick="shareQuotation(${r.id})">📱 Share WhatsApp</button>
-        <button class="secondary" onclick="showPage('quotations')">← Back</button>
-      </div>
-
-    </div>
-  `;
-
-  document.getElementById("printQuotation").innerHTML=html;
-
-  document.querySelectorAll("section").forEach(x=>x.classList.add("hidden"));
-
-  document.getElementById("printQuotation").classList.remove("hidden");
-
-}
-
-async function shareQuotation(id){
-
-  const r=data.find(x=>x.id===id);
-  if(!r)return;
-
-  try{
-
-    openQuotation(id);
-
-    await new Promise(resolve=>setTimeout(resolve,500));
-
-    function loadScript(src){
-      return new Promise((resolve,reject)=>{
-        const s=document.createElement("script");
-        s.src=src;
-        s.onload=resolve;
-        s.onerror=reject;
-        document.head.appendChild(s);
-      });
-    }
-
-    if(!window.html2canvas){
-      await loadScript(
-        "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
-      );
-    }
-
-    if(!window.jspdf){
-      await loadScript(
-        "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
-      );
-    }
-
-    const box=document.querySelector("#printQuotation .card");
-
-    if(!box){
-      alert("Quotation not found");
-      return;
-    }
-
-    const buttons=box.querySelector(".no-print");
-
-    if(buttons) buttons.style.display="none";
-
-    const images=box.querySelectorAll("img");
-
-    await Promise.all(
-      Array.from(images).map(img=>{
-        if(img.complete) return Promise.resolve();
-        return new Promise(resolve=>{
-          img.onload=resolve;
-          img.onerror=resolve;
-        });
-      })
-    );
-
-    const canvas=await html2canvas(box,{
-      scale:2,
-      backgroundColor:"#ffffff",
-      useCORS:true
-    });
-
-    if(buttons) buttons.style.display="";
-
-    const {jsPDF}=window.jspdf;
-
-    const pdf=new jsPDF("p","mm","a4");
-
-    const pageWidth=210;
-    const pageHeight=297;
-    const margin=8;
-
-    const imgWidth=pageWidth-(margin*2);
-
-    const pagePixelHeight=
-      Math.floor(
-        canvas.width *
-        ((pageHeight-(margin*2))/imgWidth)
-      );
-
-    let sourceY=0;
-    let pageNumber=0;
-
-    while(sourceY<canvas.height){
-
-      const sliceHeight=Math.min(
-        pagePixelHeight,
-        canvas.height-sourceY
-      );
-
-      const slice=document.createElement("canvas");
-
-      slice.width=canvas.width;
-      slice.height=sliceHeight;
-
-      const ctx=slice.getContext("2d");
-
-      ctx.drawImage(
-        canvas,
-        0,
-        sourceY,
-        canvas.width,
-        sliceHeight,
-        0,
-        0,
-        canvas.width,
-        sliceHeight
-      );
-
-      const imageData=slice.toDataURL(
-        "image/jpeg",
-        0.95
-      );
-
-      const imageHeight=
-        sliceHeight*imgWidth/canvas.width;
-
-      if(pageNumber>0){
-        pdf.addPage();
-      }
-
-      pdf.addImage(
-        imageData,
-        "JPEG",
-        margin,
-        margin,
-        imgWidth,
-        imageHeight
-      );
-
-      sourceY+=sliceHeight;
-      pageNumber++;
-    }
-
-    const safeName=(r.name || "Customer")
-      .replace(/[^a-z0-9]/gi,"_");
-
-    const fileName=
-      (r.quoteNo || "Quotation")+
-      "_"+
-      safeName+
-      ".pdf";
-
-    const blob=pdf.output("blob");
-
-    const file=new File(
-      [blob],
-      fileName,
-      {type:"application/pdf"}
-    );
-
-    if(
-      navigator.canShare &&
-      navigator.canShare({files:[file]})
-    ){
-
-      await navigator.share({
-        files:[file],
-        title:"Quotation",
-        text:"Quotation "+(r.quoteNo || "")
-      });
-
-    }else{
-
-      const url=URL.createObjectURL(blob);
-
-      const a=document.createElement("a");
-
-      a.href=url;
-      a.download=fileName;
-
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-
-      URL.revokeObjectURL(url);
-
-      alert(
-        "PDF downloaded. Open WhatsApp and attach this PDF."
-      );
-    }
-
-  }catch(error){
-
-    console.error(error);
-
-    alert(
-      "PDF sharing failed. Please try again."
-    );
-  }
-}
-
-function clearMeasurement(){
-
-  editingId=null;
-
-  document.getElementById("customerName").value="";
-  document.getElementById("customerPhone").value="";
-  document.getElementById("customerAddress").value="";
-  document.getElementById("measurementDate").value=today();
-  document.getElementById("defaultRate").value="";
-
-  rebuildRows();
+r.readAsDataURL(f)
 
 }
 
 function loadSettings(){
 
-  document.getElementById("businessName").value=settings.businessName||"";
-  document.getElementById("businessPhone").value=settings.businessPhone||"";
-  document.getElementById("businessWhatsapp").value=settings.businessWhatsapp||"";
-  document.getElementById("businessGST").value=settings.businessGST||"";
-  document.getElementById("businessAddress").value=settings.businessAddress||"";
+let s=S.settings;
 
-  document.getElementById("logoPreview").src=settings.logo||"";
+$('sName').value=s.name||'';
+$('sPhone').value=s.phone||'';
+$('sWa').value=s.wa||'';
+$('sEmail').value=s.email||'';
+$('sGst').value=s.gst||'';
+$('sAddr').value=s.addr||'';
+$('sValid').value=s.valid||'7 days';
+
+$('logoPrev').src=s.logo||'';
+
+$('headName').textContent=
+s.name||'Curtain Measurement & Quotation';
+
+$('headSub').textContent=
+[s.addr,s.phone].filter(Boolean).join(' • ')
+||
+'Measurement and quotation management'
 
 }
 
 function saveSettings(){
 
-  settings.businessName=document.getElementById("businessName").value;
-  settings.businessPhone=document.getElementById("businessPhone").value;
-  settings.businessWhatsapp=document.getElementById("businessWhatsapp").value;
-  settings.businessGST=document.getElementById("businessGST").value;
-  settings.businessAddress=document.getElementById("businessAddress").value;
+S.settings.name=$('sName').value.trim();
+S.settings.phone=$('sPhone').value.trim();
+S.settings.wa=$('sWa').value.trim();
+S.settings.email=$('sEmail').value.trim();
+S.settings.gst=$('sGst').value.trim();
+S.settings.addr=$('sAddr').value.trim();
+S.settings.valid=$('sValid').value.trim();
 
-  localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));
+persist();
 
-  updateWelcome();
-
-  alert("Business settings saved!");
-
-}
-
-function loadLogo(event){
-
-  const file=event.target.files[0];
-
-  if(!file)return;
-
-  const reader=new FileReader();
-
-  reader.onload=function(e){
-
-    settings.logo=e.target.result;
-
-    document.getElementById("logoPreview").src=e.target.result;
-
-    localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));
-
-  };
-
-  reader.readAsDataURL(file);
-
-}
-
-function updateWelcome(){
-
-  const name=settings.businessName || "your curtain shop";
-
-  document.getElementById("businessWelcome").innerText=
-    "Welcome to "+name+". Manage measurements and quotations easily.";
-
-}
-
-function exportBackup(){
-
-  const backup={
-    data:data,
-    settings:settings,
-    exportedAt:new Date().toISOString()
-  };
-
-  const blob=new Blob(
-    [JSON.stringify(backup,null,2)],
-    {type:"application/json"}
-  );
-
-  const url=URL.createObjectURL(blob);
-
-  const a=document.createElement("a");
-  a.href=url;
-  a.download="curtain-app-backup.json";
-  a.click();
-
-  URL.revokeObjectURL(url);
-
-}
-
-function escapeHtml(value){
-
-  return String(value||"")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-
-}
-
-
-/* START APP */
-
-rebuildRows();
 loadSettings();
-updateWelcome();
+
+alert('Settings saved.')
+
+}
+
+function backup(){
+
+let b=new Blob(
+[JSON.stringify(S,null,2)],
+{type:'application/json'}
+);
+
+let a=document.createElement('a');
+
+a.href=URL.createObjectURL(b);
+
+a.download='curtain-app-backup.json';
+
+a.click()
+
+}
+
+function restore(i){
+
+let f=i.files[0];
+
+if(!f)return;
+
+let r=new FileReader();
+
+r.onload=e=>{
+
+try{
+
+S=JSON.parse(e.target.result);
+
+persist();
+
+location.reload()
+
+}catch(x){
+
+alert('Invalid backup file.')
+
+}
+
+};
+
+r.readAsText(f)
+
+}
+
+loadSettings();
+clearM(false);
+renderCustomers();
+renderQuotes();
+page('home',[...document.querySelectorAll('nav button')][0]);
 
 </script>
 
