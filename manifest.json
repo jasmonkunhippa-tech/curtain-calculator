@@ -1,0 +1,9 @@
+{
+  "name": "Curtain Shop Manager",
+  "short_name": "Curtain Manager",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1f2937",
+  "orientation": "portrait"
+}
