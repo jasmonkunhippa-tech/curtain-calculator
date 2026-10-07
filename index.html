@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Curtain Shop Manager</title>
 
+<!-- PDF libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <style>
 *{box-sizing:border-box}
 
@@ -39,22 +43,27 @@ header p{
  opacity:.8;
 }
 
+/* =========================
+   NAVIGATION
+========================= */
+
 .nav{
- display:flex;
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
  gap:8px;
- overflow-x:auto;
  padding:4px 0 12px;
 }
 
 .nav button{
- flex:0 0 auto;
+ width:100%;
  border:0;
  border-radius:10px;
- padding:12px 18px;
+ padding:12px 8px;
  background:#e5e7eb;
  color:#111827;
  font-weight:bold;
  font-size:15px;
+ margin:0;
 }
 
 .nav button.active{
@@ -62,8 +71,17 @@ header p{
  color:white;
 }
 
-.page{display:none}
-.page.active{display:block}
+/* =========================
+   COMMON
+========================= */
+
+.page{
+ display:none;
+}
+
+.page.active{
+ display:block;
+}
 
 .card{
  background:white;
@@ -114,11 +132,30 @@ button{
  cursor:pointer;
 }
 
-.btn-dark{background:#111827;color:white}
-.btn-blue{background:#2563eb;color:white}
-.btn-green{background:#15803d;color:white}
-.btn-red{background:#dc2626;color:white}
-.btn-light{background:#e5e7eb;color:#111827}
+.btn-dark{
+ background:#111827;
+ color:white;
+}
+
+.btn-blue{
+ background:#2563eb;
+ color:white;
+}
+
+.btn-green{
+ background:#15803d;
+ color:white;
+}
+
+.btn-red{
+ background:#dc2626;
+ color:white;
+}
+
+.btn-light{
+ background:#e5e7eb;
+ color:#111827;
+}
 
 .home-buttons{
  display:grid;
@@ -153,7 +190,8 @@ td{
  text-align:center;
 }
 
-td input,td select{
+td input,
+td select{
  min-width:100px;
 }
 
@@ -184,14 +222,8 @@ td input,td select{
  margin-bottom:10px;
 }
 
-.item-head{
- display:flex;
- justify-content:space-between;
- align-items:center;
- gap:8px;
-}
-
-.customer-card,.quote-card{
+.customer-card,
+.quote-card{
  background:white;
  border-radius:14px;
  padding:15px;
@@ -221,6 +253,7 @@ td input,td select{
  padding:25px;
  max-width:850px;
  margin:auto;
+ box-shadow:0 2px 12px rgba(0,0,0,.06);
 }
 
 .quote-header{
@@ -259,7 +292,33 @@ td input,td select{
  margin-top:15px;
 }
 
-.no-print{}
+.quote-actions{
+ display:flex;
+ flex-wrap:wrap;
+ gap:4px;
+ margin-top:10px;
+}
+
+.pdf-status{
+ text-align:center;
+ padding:12px;
+ background:#eef6ff;
+ border-radius:10px;
+ margin:10px 0;
+ display:none;
+}
+
+.pdf-sheet{
+ position:absolute;
+ left:-100000px;
+ top:0;
+ width:794px;
+ background:white;
+}
+
+/* =========================
+   MOBILE
+========================= */
 
 @media(max-width:700px){
 
@@ -275,6 +334,15 @@ td input,td select{
   font-size:20px;
  }
 
+ .nav{
+  grid-template-columns:repeat(3,1fr);
+ }
+
+ .nav button{
+  font-size:13px;
+  padding:11px 5px;
+ }
+
  .quote-info{
   flex-direction:column;
  }
@@ -283,7 +351,19 @@ td input,td select{
   width:100%;
  }
 
+ .quote-actions button{
+  flex:1 1 auto;
+ }
+
+ .preview{
+  padding:15px;
+ }
+
 }
+
+/* =========================
+   PRINT
+========================= */
 
 @media print{
 
@@ -328,483 +408,582 @@ td input,td select{
  <p>Measurement • Quotation • Customers</p>
 </header>
 
+<!-- =========================
+     NAVIGATION
+========================= -->
+
 <div class="nav no-print">
 
- <button id="navHome" onclick="showPage('home')">Home</button>
+ <button id="navHome"
+ onclick="showPage('home')">
+ Home
+ </button>
 
- <button id="navMeasurement" onclick="showPage('measurement')">
+ <button id="navMeasurement"
+ onclick="showPage('measurement')">
  Measurement
  </button>
 
- <button id="navCustomers" onclick="showPage('customers')">
+ <button id="navCustomers"
+ onclick="showPage('customers')">
  Customers
  </button>
 
- <button id="navQuotation" onclick="showPage('quotation')">
+ <button id="navQuotation"
+ onclick="showPage('quotation')">
  Quotation
  </button>
 
- <button id="navSavedQuotes" onclick="showPage('savedQuotes')">
+ <button id="navSavedQuotes"
+ onclick="showPage('savedQuotes')">
  Saved Quotes
  </button>
 
- <button id="navSettings" onclick="showPage('settings')">
+ <button id="navSettings"
+ onclick="showPage('settings')">
  Settings
  </button>
 
 </div>
 
 
-<!-- HOME -->
+<!-- =========================
+     HOME
+========================= -->
 
 <section id="home" class="page active">
 
-<div class="card">
+ <div class="card">
 
-<h2>Welcome 👋</h2>
+  <h2>Welcome 👋</h2>
 
-<p>
-Measurement and quotation are separate.
-Measurement is for your internal work.
-Quotation contains only the items you choose.
-</p>
+  <p>
+   Measurement and quotation are separate.
+   Measurement is for your internal work.
+   Quotation contains only the items you choose.
+  </p>
 
-<div class="home-buttons">
+  <div class="home-buttons">
 
-<button class="btn-dark"
-onclick="newMeasurement()">
-➕ New Measurement
-</button>
+   <button class="btn-dark"
+   onclick="newMeasurement()">
+   ➕ New Measurement
+   </button>
 
-<button class="btn-blue"
-onclick="newQuotation()">
-🧾 New Quotation
-</button>
+   <button class="btn-blue"
+   onclick="newQuotation()">
+   🧾 New Quotation
+   </button>
 
-<button class="btn-light"
-onclick="showPage('customers')">
-👥 Customers
-</button>
+   <button class="btn-light"
+   onclick="showPage('customers')">
+   👥 Customers
+   </button>
 
-<button class="btn-light"
-onclick="showPage('savedQuotes')">
-📄 Saved Quotations
-</button>
+   <button class="btn-light"
+   onclick="showPage('savedQuotes')">
+   📄 Saved Quotations
+   </button>
 
-</div>
+  </div>
 
-</div>
+ </div>
 
 </section>
 
 
-<!-- MEASUREMENT -->
+<!-- =========================
+     MEASUREMENT
+========================= -->
 
 <section id="measurement" class="page">
 
-<div class="card">
+ <div class="card">
 
-<h2>📏 Measurement Sheet</h2>
+  <h2>📏 Measurement Sheet</h2>
 
-<div class="grid">
+  <div class="grid">
 
-<div class="field">
-<label>Customer Name *</label>
-<input id="mCustomer" placeholder="Customer name">
-</div>
+   <div class="field">
+    <label>Customer Name *</label>
+    <input id="mCustomer"
+    placeholder="Customer name">
+   </div>
 
-<div class="field">
-<label>Phone / WhatsApp</label>
-<input id="mPhone" type="tel" placeholder="Phone number">
-</div>
+   <div class="field">
+    <label>Phone / WhatsApp</label>
+    <input id="mPhone"
+    type="tel"
+    placeholder="Phone number">
+   </div>
 
-<div class="field">
-<label>Address</label>
-<textarea id="mAddress" placeholder="Customer address"></textarea>
-</div>
+   <div class="field">
+    <label>Address</label>
+    <textarea id="mAddress"
+    placeholder="Customer address"></textarea>
+   </div>
 
-<div class="field">
-<label>Date</label>
-<input id="mDate" type="date">
-</div>
+   <div class="field">
+    <label>Date</label>
+    <input id="mDate"
+    type="date">
+   </div>
 
-<div class="field">
-<label>Measurement Unit</label>
+   <div class="field">
+    <label>Measurement Unit</label>
 
-<select id="mUnit" onchange="recalculateMeasurements()">
-<option value="cm">Centimeter</option>
-<option value="inch">Inch</option>
-</select>
+    <select id="mUnit"
+    onchange="recalculateMeasurements()">
 
-</div>
+     <option value="cm">
+      Centimeter
+     </option>
 
-</div>
+     <option value="inch">
+      Inch
+     </option>
 
-</div>
+    </select>
+
+   </div>
+
+  </div>
+
+ </div>
 
 
-<div class="card">
+ <div class="card">
 
-<div style="display:flex;justify-content:space-between;align-items:center">
+  <div style="
+   display:flex;
+   justify-content:space-between;
+   align-items:center;
+   gap:8px;
+  ">
 
-<h2>Measurements</h2>
+   <h2>Measurements</h2>
 
-<button class="btn-blue"
-onclick="addMeasurementRow()">
-＋ Add Row
-</button>
+   <button class="btn-blue"
+   onclick="addMeasurementRow()">
+   ＋ Add Row
+   </button>
 
-</div>
+  </div>
 
-<div class="table-wrap">
+  <div class="table-wrap">
 
-<table>
+   <table>
 
-<thead>
+    <thead>
 
-<tr>
-<th>No</th>
-<th>Room / Area</th>
-<th>Type</th>
-<th>Height</th>
-<th>Width</th>
-<th>Sq.Ft</th>
-<th>Rate</th>
-<th>Amount</th>
-<th></th>
-</tr>
+     <tr>
+      <th>No</th>
+      <th>Room / Area</th>
+      <th>Type</th>
+      <th>Height</th>
+      <th>Width</th>
+      <th>Sq.Ft</th>
+      <th>Rate</th>
+      <th>Amount</th>
+      <th></th>
+     </tr>
 
-</thead>
+    </thead>
 
-<tbody id="measurementBody"></tbody>
+    <tbody id="measurementBody"></tbody>
 
-</table>
+   </table>
 
-</div>
+  </div>
 
-<div class="summary">
 
-<div class="summary-row">
-<span>Total Sq.Ft</span>
-<strong id="measurementSqft">0.00</strong>
-</div>
+  <div class="summary">
 
-<div class="summary-row">
-<span>Total Amount</span>
-<strong>₹<span id="measurementAmount">0.00</span></strong>
-</div>
+   <div class="summary-row">
+    <span>Total Sq.Ft</span>
+    <strong id="measurementSqft">
+     0.00
+    </strong>
+   </div>
 
-</div>
+   <div class="summary-row">
+    <span>Total Amount</span>
+    <strong>
+     ₹<span id="measurementAmount">
+      0.00
+     </span>
+    </strong>
+   </div>
 
-<div style="margin-top:12px">
+  </div>
 
-<button class="btn-green"
-onclick="saveMeasurement()">
-💾 Save Measurement
-</button>
 
-<button class="btn-blue"
-onclick="measurementToQuotation()">
-🧾 Create Quotation
-</button>
+  <div style="margin-top:12px">
 
-<button class="btn-light"
-onclick="clearMeasurement()">
-Clear
-</button>
+   <button class="btn-green"
+   onclick="saveMeasurement()">
+   💾 Save Measurement
+   </button>
 
-</div>
+   <button class="btn-blue"
+   onclick="measurementToQuotation()">
+   🧾 Create Quotation
+   </button>
 
-</div>
+   <button class="btn-light"
+   onclick="clearMeasurement()">
+   Clear
+   </button>
+
+  </div>
+
+ </div>
 
 </section>
 
 
-<!-- CUSTOMERS -->
+<!-- =========================
+     CUSTOMERS
+========================= -->
 
 <section id="customers" class="page">
 
-<div class="card">
+ <div class="card">
 
-<h2>👥 Saved Customers</h2>
+  <h2>👥 Saved Customers</h2>
 
-<input id="customerSearch"
-placeholder="Search customer..."
-oninput="renderCustomers()">
+  <input
+   id="customerSearch"
+   placeholder="Search customer..."
+   oninput="renderCustomers()">
 
-</div>
+ </div>
 
-<div id="customerList"></div>
+ <div id="customerList"></div>
 
 </section>
 
 
-<!-- QUOTATION -->
+<!-- =========================
+     QUOTATION
+========================= -->
 
 <section id="quotation" class="page">
 
-<div class="card">
+ <div class="card">
 
-<h2>🧾 Quotation</h2>
+  <h2>🧾 Quotation</h2>
 
-<div class="grid">
+  <div class="grid">
 
-<div class="field">
-<label>Customer Name *</label>
-<input id="qCustomer">
-</div>
+   <div class="field">
+    <label>Customer Name *</label>
+    <input id="qCustomer">
+   </div>
 
-<div class="field">
-<label>Phone</label>
-<input id="qPhone">
-</div>
+   <div class="field">
+    <label>Phone</label>
+    <input id="qPhone">
+   </div>
 
-<div class="field">
-<label>Address</label>
-<textarea id="qAddress"></textarea>
-</div>
+   <div class="field">
+    <label>Address</label>
+    <textarea id="qAddress"></textarea>
+   </div>
 
-<div class="field">
-<label>Quotation No</label>
-<input id="qNumber">
-</div>
+   <div class="field">
+    <label>Quotation No</label>
+    <input id="qNumber">
+   </div>
 
-<div class="field">
-<label>Date</label>
-<input id="qDate" type="date">
-</div>
+   <div class="field">
+    <label>Date</label>
+    <input id="qDate"
+    type="date">
+   </div>
 
-</div>
+  </div>
 
-</div>
-
-
-<div class="card">
-
-<div style="display:flex;justify-content:space-between;align-items:center">
-
-<h2>Quotation Items</h2>
-
-<button class="btn-blue"
-onclick="addQuotationItem()">
-＋ Add Item
-</button>
-
-</div>
-
-<div id="quotationItems"></div>
-
-</div>
+ </div>
 
 
-<div class="card">
+ <div class="card">
 
-<h2>💰 Calculation</h2>
+  <div style="
+   display:flex;
+   justify-content:space-between;
+   align-items:center;
+   gap:8px;
+  ">
 
-<div class="grid">
+   <h2>Quotation Items</h2>
 
-<div class="field">
-<label>Discount Type</label>
+   <button class="btn-blue"
+   onclick="addQuotationItem()">
+   ＋ Add Item
+   </button>
 
-<select id="discountType"
-onchange="calculateQuotation()">
+  </div>
 
-<option value="percent">Percentage %</option>
-<option value="fixed">Fixed Amount ₹</option>
+  <div id="quotationItems"></div>
 
-</select>
-
-</div>
-
-<div class="field">
-<label>Discount</label>
-<input id="discountValue"
-type="number"
-step="0.01"
-value="0"
-oninput="calculateQuotation()">
-</div>
-
-<div class="field">
-<label>GST %</label>
-<input id="gstValue"
-type="number"
-step="0.01"
-value="0"
-oninput="calculateQuotation()">
-</div>
-
-</div>
-
-<div class="summary">
-
-<div class="summary-row">
-<span>Subtotal</span>
-<strong>₹<span id="qSubtotal">0.00</span></strong>
-</div>
-
-<div class="summary-row">
-<span>Discount</span>
-<strong>₹<span id="qDiscount">0.00</span></strong>
-</div>
-
-<div class="summary-row">
-<span>GST</span>
-<strong>₹<span id="qGST">0.00</span></strong>
-</div>
-
-<div class="summary-row grand">
-<span>Grand Total</span>
-<strong>₹<span id="qGrandTotal">0.00</span></strong>
-</div>
-
-</div>
-
-</div>
+ </div>
 
 
-<div class="card">
+ <div class="card">
 
-<h3>Terms & Conditions</h3>
+  <h2>💰 Calculation</h2>
 
-<textarea id="qTerms"
-placeholder="Quotation validity, payment terms, installation terms etc."></textarea>
+  <div class="grid">
 
-<br>
+   <div class="field">
 
-<button class="btn-green"
-onclick="saveQuotation()">
-💾 Save Quotation
-</button>
+    <label>Discount Type</label>
 
-<button class="btn-blue"
-onclick="previewQuotation()">
-👁 Preview
-</button>
+    <select id="discountType"
+    onchange="calculateQuotation()">
 
-</div>
+     <option value="percent">
+      Percentage %
+     </option>
+
+     <option value="fixed">
+      Fixed Amount ₹
+     </option>
+
+    </select>
+
+   </div>
+
+   <div class="field">
+
+    <label>Discount</label>
+
+    <input id="discountValue"
+    type="number"
+    step="0.01"
+    value="0"
+    oninput="calculateQuotation()">
+
+   </div>
+
+   <div class="field">
+
+    <label>GST %</label>
+
+    <input id="gstValue"
+    type="number"
+    step="0.01"
+    value="0"
+    oninput="calculateQuotation()">
+
+   </div>
+
+  </div>
+
+
+  <div class="summary">
+
+   <div class="summary-row">
+    <span>Subtotal</span>
+    <strong>
+     ₹<span id="qSubtotal">0.00</span>
+    </strong>
+   </div>
+
+   <div class="summary-row">
+    <span>Discount</span>
+    <strong>
+     ₹<span id="qDiscount">0.00</span>
+    </strong>
+   </div>
+
+   <div class="summary-row">
+    <span>GST</span>
+    <strong>
+     ₹<span id="qGST">0.00</span>
+    </strong>
+   </div>
+
+   <div class="summary-row grand">
+    <span>Grand Total</span>
+    <strong>
+     ₹<span id="qGrandTotal">0.00</span>
+    </strong>
+   </div>
+
+  </div>
+
+ </div>
+
+
+ <div class="card">
+
+  <h3>Terms & Conditions</h3>
+
+  <textarea
+   id="qTerms"
+   placeholder="Quotation validity, payment terms, installation terms etc.">
+  </textarea>
+
+  <br>
+
+  <button class="btn-green"
+  onclick="saveQuotation()">
+  💾 Save Quotation
+  </button>
+
+  <button class="btn-blue"
+  onclick="previewQuotation()">
+  👁 Preview
+  </button>
+
+ </div>
 
 </section>
 
 
-<!-- SAVED QUOTATIONS -->
+<!-- =========================
+     SAVED QUOTATIONS
+========================= -->
 
 <section id="savedQuotes" class="page">
 
-<div class="card">
+ <div class="card">
 
-<h2>📄 Saved Quotations</h2>
+  <h2>📄 Saved Quotations</h2>
 
-<div id="savedQuoteList"></div>
+  <div id="savedQuoteList"></div>
 
-</div>
+ </div>
 
 </section>
 
 
-<!-- SETTINGS -->
+<!-- =========================
+     SETTINGS
+========================= -->
 
 <section id="settings" class="page">
 
-<div class="card">
+ <div class="card">
 
-<h2>⚙️ Business Settings</h2>
+  <h2>⚙️ Business Settings</h2>
 
-<div class="grid">
+  <div class="grid">
 
-<div class="field">
-<label>Business / Shop Name</label>
-<input id="sName"
-placeholder="Homestyle Curtains">
-</div>
+   <div class="field">
+    <label>Business / Shop Name</label>
+    <input id="sName"
+    placeholder="Homestyle Curtains">
+   </div>
 
-<div class="field">
-<label>Phone</label>
-<input id="sPhone">
-</div>
+   <div class="field">
+    <label>Phone</label>
+    <input id="sPhone">
+   </div>
 
-<div class="field">
-<label>WhatsApp</label>
-<input id="sWhatsapp">
-</div>
+   <div class="field">
+    <label>WhatsApp</label>
+    <input id="sWhatsapp">
+   </div>
 
-<div class="field">
-<label>Email</label>
-<input id="sEmail">
-</div>
+   <div class="field">
+    <label>Email</label>
+    <input id="sEmail">
+   </div>
 
-<div class="field">
-<label>GST Number</label>
-<input id="sGST">
-</div>
+   <div class="field">
+    <label>GST Number</label>
+    <input id="sGST">
+   </div>
 
-<div class="field">
-<label>Quotation Validity</label>
-<input id="sValidity"
-placeholder="15 Days">
-</div>
+   <div class="field">
+    <label>Quotation Validity</label>
+    <input id="sValidity"
+    placeholder="15 Days">
+   </div>
 
-</div>
+  </div>
 
-<div class="field" style="margin-top:12px">
-<label>Business Address</label>
-<textarea id="sAddress"></textarea>
-</div>
 
-<div class="field" style="margin-top:12px">
-<label>Business Logo</label>
-<input id="sLogo" type="file" accept="image/*"
-onchange="loadLogo(event)">
-<br>
-<img id="logoPreview" class="logo">
-</div>
+  <div class="field"
+  style="margin-top:12px">
 
-<br>
+   <label>Business Address</label>
 
-<button class="btn-green"
-onclick="saveSettings()">
-💾 Save Settings
-</button>
+   <textarea id="sAddress"></textarea>
 
-<button class="btn-light"
-onclick="downloadBackup()">
-⬇ Backup
-</button>
+  </div>
 
-</div>
+
+  <div class="field"
+  style="margin-top:12px">
+
+   <label>Business Logo</label>
+
+   <input
+    id="sLogo"
+    type="file"
+    accept="image/*"
+    onchange="loadLogo(event)">
+
+   <br>
+
+   <img
+    id="logoPreview"
+    class="logo">
+
+  </div>
+
+
+  <br>
+
+  <button class="btn-green"
+  onclick="saveSettings()">
+  💾 Save Settings
+  </button>
+
+  <button class="btn-light"
+  onclick="downloadBackup()">
+  ⬇ Backup
+  </button>
+
+ </div>
 
 </section>
 
 
-<!-- QUOTATION PREVIEW -->
+<!-- =========================
+     QUOTATION PREVIEW
+========================= -->
 
 <section id="quotePreview" class="page">
 
-<div class="no-print" style="margin-bottom:12px">
+ <div class="no-print"
+ style="margin-bottom:12px">
 
-<button class="btn-light"
-onclick="showPage('savedQuotes')">
-← Back
-</button>
+  <button class="btn-light"
+  onclick="showPage('savedQuotes')">
+  ← Back
+  </button>
 
-<button class="btn-blue"
-onclick="window.print()">
-🖨 Save / Print PDF
-</button>
+  <button class="btn-blue"
+  onclick="window.print()">
+  🖨 Save / Print PDF
+  </button>
 
-<button class="btn-green"
-onclick="shareQuotation()">
-📱 Share
-</button>
+ </div>
 
-</div>
-
-<div id="previewContent"></div>
+ <div id="previewContent"></div>
 
 </section>
 
-
 </div>
+
+
+<!-- Hidden PDF rendering area -->
+<div id="pdfSheet" class="pdf-sheet"></div>
 
 
 <script>
@@ -816,40 +995,43 @@ onclick="shareQuotation()">
    STORAGE
 ========================= */
 
-const DATA_KEY = "curtain_manager_data_v4";
-const SETTINGS_KEY = "curtain_manager_settings_v4";
+const DATA_KEY =
+ "curtain_manager_data_v4";
 
-let measurements = [];
-let quotations = [];
+const SETTINGS_KEY =
+ "curtain_manager_settings_v4";
 
-let settings = {};
+let measurements=[];
+let quotations=[];
+let settings={};
 
-let currentMeasurementId = null;
-let currentQuotationId = null;
+let currentMeasurementId=null;
+let currentQuotationId=null;
 
-let quotationItems = [];
+let quotationItems=[];
 
 
 /* =========================
-   SAFE STORAGE
+   STORAGE FUNCTIONS
 ========================= */
 
 function loadStorage(){
 
  try{
 
-  const d = localStorage.getItem(DATA_KEY);
+  const d=
+   localStorage.getItem(DATA_KEY);
 
   if(d){
 
-   const obj = JSON.parse(d);
+   const obj=JSON.parse(d);
 
-   measurements =
+   measurements=
     Array.isArray(obj.measurements)
     ? obj.measurements
     : [];
 
-   quotations =
+   quotations=
     Array.isArray(obj.quotations)
     ? obj.quotations
     : [];
@@ -863,11 +1045,16 @@ function loadStorage(){
 
  }
 
+
  try{
 
-  const s = localStorage.getItem(SETTINGS_KEY);
+  const s=
+   localStorage.getItem(SETTINGS_KEY);
 
-  settings = s ? JSON.parse(s) : {};
+  settings=
+   s
+   ? JSON.parse(s)
+   : {};
 
  }catch(e){
 
@@ -897,7 +1084,9 @@ function saveStorage(){
 
  }catch(e){
 
-  alert("Unable to save data on this device.");
+  alert(
+   "Unable to save data on this device."
+  );
 
  }
 
@@ -914,9 +1103,13 @@ function today(){
 
  const y=d.getFullYear();
 
- const m=String(d.getMonth()+1).padStart(2,"0");
+ const m=String(
+  d.getMonth()+1
+ ).padStart(2,"0");
 
- const day=String(d.getDate()).padStart(2,"0");
+ const day=String(
+  d.getDate()
+ ).padStart(2,"0");
 
  return y+"-"+m+"-"+day;
 
@@ -932,7 +1125,9 @@ function money(n){
 
 function esc(v){
 
- return String(v==null?"":v)
+ return String(
+  v==null ? "" : v
+ )
  .replace(/&/g,"&amp;")
  .replace(/</g,"&lt;")
  .replace(/>/g,"&gt;")
@@ -944,7 +1139,8 @@ function esc(v){
 
 function newId(){
 
- return Date.now()+Math.floor(Math.random()*1000);
+ return Date.now()+
+  Math.floor(Math.random()*1000);
 
 }
 
@@ -955,13 +1151,16 @@ function newId(){
 
 function showPage(page){
 
- document.querySelectorAll(".page").forEach(function(p){
+ document
+ .querySelectorAll(".page")
+ .forEach(function(p){
 
   p.classList.remove("active");
 
  });
 
- const target=document.getElementById(page);
+ const target=
+  document.getElementById(page);
 
  if(target){
 
@@ -969,17 +1168,20 @@ function showPage(page){
 
  }
 
- document.querySelectorAll(".nav button").forEach(function(b){
+ document
+ .querySelectorAll(".nav button")
+ .forEach(function(b){
 
   b.classList.remove("active");
 
  });
 
- const nav=document.getElementById(
-  "nav"+
-  page.charAt(0).toUpperCase()+
-  page.slice(1)
- );
+ const nav=
+  document.getElementById(
+   "nav"+
+   page.charAt(0).toUpperCase()+
+   page.slice(1)
+  );
 
  if(nav){
 
@@ -987,20 +1189,33 @@ function showPage(page){
 
  }
 
- if(page==="customers") renderCustomers();
+ if(page==="customers"){
 
- if(page==="savedQuotes") renderSavedQuotes();
+  renderCustomers();
 
- if(page==="settings") loadSettings();
+ }
+
+ if(page==="savedQuotes"){
+
+  renderSavedQuotes();
+
+ }
+
+ if(page==="settings"){
+
+  loadSettings();
+
+ }
 
 }
 
 
 /* =========================
-   MEASUREMENT
+   CURTAIN TYPES
 ========================= */
 
 const curtainTypes=[
+
  "Cloth Curtain",
  "Blackout Curtain",
  "Zebra Blind",
@@ -1011,21 +1226,41 @@ const curtainTypes=[
  "Bamboo Blind",
  "Honeycomb Blind",
  "Other"
+
 ];
 
+
+/* =========================
+   MEASUREMENT
+========================= */
 
 function newMeasurement(){
 
  currentMeasurementId=null;
 
- document.getElementById("mCustomer").value="";
- document.getElementById("mPhone").value="";
- document.getElementById("mAddress").value="";
- document.getElementById("mDate").value=today();
+ document.getElementById(
+  "mCustomer"
+ ).value="";
 
- document.getElementById("mUnit").value="cm";
+ document.getElementById(
+  "mPhone"
+ ).value="";
 
- document.getElementById("measurementBody").innerHTML="";
+ document.getElementById(
+  "mAddress"
+ ).value="";
+
+ document.getElementById(
+  "mDate"
+ ).value=today();
+
+ document.getElementById(
+  "mUnit"
+ ).value="cm";
+
+ document.getElementById(
+  "measurementBody"
+ ).innerHTML="";
 
  addMeasurementRow();
 
@@ -1036,25 +1271,36 @@ function newMeasurement(){
 
 function addMeasurementRow(data){
 
- const body=document.getElementById("measurementBody");
+ const body=
+  document.getElementById(
+   "measurementBody"
+  );
 
- const tr=document.createElement("tr");
+ const tr=
+  document.createElement("tr");
 
  let options="";
 
  curtainTypes.forEach(function(t){
 
   options+=
-   '<option value="'+esc(t)+'">'+esc(t)+'</option>';
+   '<option value="'+
+   esc(t)+
+   '">'+
+   esc(t)+
+   '</option>';
 
  });
+
 
  tr.innerHTML=`
 
  <td class="rowNo"></td>
 
  <td>
-  <input class="mArea" placeholder="Hall / Bedroom">
+  <input
+   class="mArea"
+   placeholder="Hall / Bedroom">
  </td>
 
  <td>
@@ -1064,33 +1310,44 @@ function addMeasurementRow(data){
  </td>
 
  <td>
-  <input class="mHeight"
+  <input
+   class="mHeight"
    type="number"
    step="0.01"
    oninput="recalculateMeasurements()">
  </td>
 
  <td>
-  <input class="mWidth"
+  <input
+   class="mWidth"
    type="number"
    step="0.01"
    oninput="recalculateMeasurements()">
  </td>
 
- <td class="mSqft">0.00</td>
+ <td class="mSqft">
+  0.00
+ </td>
 
  <td>
-  <input class="mRate"
+  <input
+   class="mRate"
    type="number"
    step="0.01"
    oninput="recalculateMeasurements()">
  </td>
 
- <td class="mAmount">0.00</td>
+ <td class="mAmount">
+  0.00
+ </td>
 
  <td>
-  <button class="btn-red"
-   onclick="this.closest('tr').remove();recalculateMeasurements()">
+  <button
+   class="btn-red"
+   onclick="
+    this.closest('tr').remove();
+    recalculateMeasurements();
+   ">
    ×
   </button>
  </td>
@@ -1099,17 +1356,32 @@ function addMeasurementRow(data){
 
  body.appendChild(tr);
 
+
  if(data){
 
-  tr.querySelector(".mArea").value=data.area||"";
+  tr.querySelector(
+   ".mArea"
+  ).value=data.area||"";
 
-  tr.querySelector(".mType").value=data.type||curtainTypes[0];
+  tr.querySelector(
+   ".mType"
+  ).value=
+   data.type||curtainTypes[0];
 
-  tr.querySelector(".mHeight").value=data.height||"";
+  tr.querySelector(
+   ".mHeight"
+  ).value=
+   data.height||"";
 
-  tr.querySelector(".mWidth").value=data.width||"";
+  tr.querySelector(
+   ".mWidth"
+  ).value=
+   data.width||"";
 
-  tr.querySelector(".mRate").value=data.rate||"";
+  tr.querySelector(
+   ".mRate"
+  ).value=
+   data.rate||"";
 
  }
 
@@ -1122,10 +1394,15 @@ function addMeasurementRow(data){
 
 function renumberRows(){
 
- document.querySelectorAll("#measurementBody tr")
+ document
+ .querySelectorAll(
+  "#measurementBody tr"
+ )
  .forEach(function(row,i){
 
-  row.querySelector(".rowNo").innerText=i+1;
+  row.querySelector(
+   ".rowNo"
+  ).innerText=i+1;
 
  });
 
@@ -1134,26 +1411,40 @@ function renumberRows(){
 
 function recalculateMeasurements(){
 
- const unit=document.getElementById("mUnit").value;
+ const unit=
+  document.getElementById(
+   "mUnit"
+  ).value;
 
  let totalSqft=0;
-
  let totalAmount=0;
 
- document.querySelectorAll("#measurementBody tr")
+ document
+ .querySelectorAll(
+  "#measurementBody tr"
+ )
  .forEach(function(row){
 
-  const h=parseFloat(
-   row.querySelector(".mHeight").value
-  )||0;
+  const h=
+   parseFloat(
+    row.querySelector(
+     ".mHeight"
+    ).value
+   )||0;
 
-  const w=parseFloat(
-   row.querySelector(".mWidth").value
-  )||0;
+  const w=
+   parseFloat(
+    row.querySelector(
+     ".mWidth"
+    ).value
+   )||0;
 
-  const rate=parseFloat(
-   row.querySelector(".mRate").value
-  )||0;
+  const rate=
+   parseFloat(
+    row.querySelector(
+     ".mRate"
+    ).value
+   )||0;
 
   let sqft=0;
 
@@ -1167,23 +1458,33 @@ function recalculateMeasurements(){
 
   }
 
-  const amount=sqft*rate;
+  const amount=
+   sqft*rate;
 
-  row.querySelector(".mSqft").innerText=money(sqft);
+  row.querySelector(
+   ".mSqft"
+  ).innerText=
+   money(sqft);
 
-  row.querySelector(".mAmount").innerText=money(amount);
+  row.querySelector(
+   ".mAmount"
+  ).innerText=
+   money(amount);
 
   totalSqft+=sqft;
-
   totalAmount+=amount;
 
  });
 
- document.getElementById("measurementSqft")
- .innerText=money(totalSqft);
+ document.getElementById(
+  "measurementSqft"
+ ).innerText=
+  money(totalSqft);
 
- document.getElementById("measurementAmount")
- .innerText=money(totalAmount);
+ document.getElementById(
+  "measurementAmount"
+ ).innerText=
+  money(totalAmount);
 
  renumberRows();
 
@@ -1194,40 +1495,64 @@ function getMeasurementForm(){
 
  const rows=[];
 
- document.querySelectorAll("#measurementBody tr")
+ document
+ .querySelectorAll(
+  "#measurementBody tr"
+ )
  .forEach(function(row){
 
-  const h=parseFloat(
-   row.querySelector(".mHeight").value
-  )||0;
+  const h=
+   parseFloat(
+    row.querySelector(
+     ".mHeight"
+    ).value
+   )||0;
 
-  const w=parseFloat(
-   row.querySelector(".mWidth").value
-  )||0;
+  const w=
+   parseFloat(
+    row.querySelector(
+     ".mWidth"
+    ).value
+   )||0;
 
   if(h>0 && w>0){
 
    rows.push({
 
-    area:row.querySelector(".mArea").value.trim(),
+    area:
+     row.querySelector(
+      ".mArea"
+     ).value.trim(),
 
-    type:row.querySelector(".mType").value,
+    type:
+     row.querySelector(
+      ".mType"
+     ).value,
 
     height:h,
 
     width:w,
 
-    sqft:parseFloat(
-     row.querySelector(".mSqft").innerText
-    )||0,
+    sqft:
+     parseFloat(
+      row.querySelector(
+       ".mSqft"
+      ).innerText
+     )||0,
 
-    rate:parseFloat(
-     row.querySelector(".mRate").value
-    )||0,
+    rate:
+     parseFloat(
+      row.querySelector(
+       ".mRate"
+      ).value
+     )||0,
 
-    amount:parseFloat(
-     row.querySelector(".mAmount").innerText
-    )||0
+    amount:
+     parseFloat(
+      row.querySelector(
+       ".mAmount"
+      ).innerText
+     )||0
 
    });
 
@@ -1235,24 +1560,37 @@ function getMeasurementForm(){
 
  });
 
+
  return {
 
-  id:currentMeasurementId||newId(),
+  id:
+   currentMeasurementId||
+   newId(),
 
   customer:
-   document.getElementById("mCustomer").value.trim(),
+   document.getElementById(
+    "mCustomer"
+   ).value.trim(),
 
   phone:
-   document.getElementById("mPhone").value.trim(),
+   document.getElementById(
+    "mPhone"
+   ).value.trim(),
 
   address:
-   document.getElementById("mAddress").value.trim(),
+   document.getElementById(
+    "mAddress"
+   ).value.trim(),
 
   date:
-   document.getElementById("mDate").value,
+   document.getElementById(
+    "mDate"
+   ).value,
 
   unit:
-   document.getElementById("mUnit").value,
+   document.getElementById(
+    "mUnit"
+   ).value,
 
   rows:rows
 
@@ -1263,11 +1601,14 @@ function getMeasurementForm(){
 
 function saveMeasurement(){
 
- const record=getMeasurementForm();
+ const record=
+  getMeasurementForm();
 
  if(!record.customer){
 
-  alert("Please enter Customer Name.");
+  alert(
+   "Please enter Customer Name."
+  );
 
   return;
 
@@ -1275,15 +1616,18 @@ function saveMeasurement(){
 
  if(!record.rows.length){
 
-  alert("Please enter at least one measurement.");
+  alert(
+   "Please enter at least one measurement."
+  );
 
   return;
 
  }
 
- const index=measurements.findIndex(
-  x=>x.id===record.id
- );
+ const index=
+  measurements.findIndex(
+   x=>x.id===record.id
+  );
 
  if(index>=0){
 
@@ -1295,11 +1639,14 @@ function saveMeasurement(){
 
  }
 
- currentMeasurementId=record.id;
+ currentMeasurementId=
+  record.id;
 
  saveStorage();
 
- alert("Measurement saved successfully.");
+ alert(
+  "Measurement saved successfully."
+ );
 
  showPage("customers");
 
@@ -1310,12 +1657,25 @@ function clearMeasurement(){
 
  currentMeasurementId=null;
 
- document.getElementById("mCustomer").value="";
- document.getElementById("mPhone").value="";
- document.getElementById("mAddress").value="";
- document.getElementById("mDate").value=today();
+ document.getElementById(
+  "mCustomer"
+ ).value="";
 
- document.getElementById("measurementBody").innerHTML="";
+ document.getElementById(
+  "mPhone"
+ ).value="";
+
+ document.getElementById(
+  "mAddress"
+ ).value="";
+
+ document.getElementById(
+  "mDate"
+ ).value=today();
+
+ document.getElementById(
+  "measurementBody"
+ ).innerHTML="";
 
  addMeasurementRow();
 
@@ -1328,23 +1688,39 @@ function clearMeasurement(){
 
 function editMeasurement(id){
 
- const r=measurements.find(x=>x.id===id);
+ const r=
+  measurements.find(
+   x=>x.id===id
+  );
 
  if(!r)return;
 
  currentMeasurementId=r.id;
 
- document.getElementById("mCustomer").value=r.customer;
+ document.getElementById(
+  "mCustomer"
+ ).value=r.customer;
 
- document.getElementById("mPhone").value=r.phone;
+ document.getElementById(
+  "mPhone"
+ ).value=r.phone;
 
- document.getElementById("mAddress").value=r.address;
+ document.getElementById(
+  "mAddress"
+ ).value=r.address;
 
- document.getElementById("mDate").value=r.date;
+ document.getElementById(
+  "mDate"
+ ).value=r.date;
 
- document.getElementById("mUnit").value=r.unit;
+ document.getElementById(
+  "mUnit"
+ ).value=r.unit;
 
- const body=document.getElementById("measurementBody");
+ const body=
+  document.getElementById(
+   "measurementBody"
+  );
 
  body.innerHTML="";
 
@@ -1361,10 +1737,14 @@ function editMeasurement(id){
 
 function deleteMeasurement(id){
 
- if(!confirm("Delete this measurement?"))return;
+ if(!confirm(
+  "Delete this measurement?"
+ ))return;
 
  measurements=
-  measurements.filter(x=>x.id!==id);
+  measurements.filter(
+   x=>x.id!==id
+  );
 
  saveStorage();
 
@@ -1379,73 +1759,110 @@ function deleteMeasurement(id){
 
 function renderCustomers(){
 
- const list=document.getElementById("customerList");
+ const list=
+  document.getElementById(
+   "customerList"
+  );
 
  const search=
-  document.getElementById("customerSearch")
-  .value.toLowerCase().trim();
+  document.getElementById(
+   "customerSearch"
+  ).value
+  .toLowerCase()
+  .trim();
 
  list.innerHTML="";
 
- const filtered=measurements.filter(function(r){
+ const filtered=
+  measurements.filter(function(r){
 
-  return (
-   (r.customer||"").toLowerCase().includes(search)
-   ||
-   (r.phone||"").toLowerCase().includes(search)
-  );
+   return (
 
- });
+    (r.customer||"")
+    .toLowerCase()
+    .includes(search)
+
+    ||
+
+    (r.phone||"")
+    .toLowerCase()
+    .includes(search)
+
+   );
+
+  });
+
 
  if(!filtered.length){
 
   list.innerHTML=
-   '<div class="card empty">No saved customers found.</div>';
+   '<div class="card empty">'+
+   'No saved customers found.'+
+   '</div>';
 
   return;
 
  }
 
- filtered.slice().reverse().forEach(function(r){
 
-  const total=r.rows.reduce(
-   (sum,x)=>sum+Number(x.sqft||0),0
-  );
+ filtered
+ .slice()
+ .reverse()
+ .forEach(function(r){
 
-  const div=document.createElement("div");
+  const total=
+   r.rows.reduce(
+    (sum,x)=>
+     sum+
+     Number(x.sqft||0),
+    0
+   );
 
-  div.className="customer-card";
+  const div=
+   document.createElement("div");
+
+  div.className=
+   "customer-card";
 
   div.innerHTML=`
 
-   <h3>${esc(r.customer)}</h3>
+   <h3>
+    ${esc(r.customer)}
+   </h3>
 
    <div class="small">
-   📞 ${esc(r.phone||"No phone")}
+    📞 ${esc(r.phone||"No phone")}
    </div>
 
    <div class="small">
-   📅 ${esc(r.date||"")}
+    📅 ${esc(r.date||"")}
    </div>
 
    <p>
-   Total Measurement:
-   <b>${money(total)} Sq.Ft</b>
+    Total Measurement:
+    <b>${money(total)} Sq.Ft</b>
    </p>
 
-   <button class="btn-blue"
-   onclick="editMeasurement(${r.id})">
-   ✏ Edit
+   <button
+    class="btn-blue"
+    onclick="editMeasurement(${r.id})">
+    ✏ Edit
    </button>
 
-   <button class="btn-green"
-   onclick="createQuotationFromMeasurement(${r.id})">
-   🧾 Quotation
+   <button
+    class="btn-green"
+    onclick="
+     createQuotationFromMeasurement(
+      ${r.id}
+     )
+    ">
+    🧾 Quotation
    </button>
 
-   <button class="btn-red"
-   onclick="deleteMeasurement(${r.id})">
-   🗑 Delete
+   <button
+    class="btn-red"
+    onclick="deleteMeasurement(${r.id})">
+    🗑 Delete
    </button>
 
   `;
@@ -1458,7 +1875,7 @@ function renderCustomers(){
 
 
 /* =========================
-   QUOTATION
+   QUOTATION NUMBER
 ========================= */
 
 function nextQuotationNumber(){
@@ -1467,18 +1884,26 @@ function nextQuotationNumber(){
 
  quotations.forEach(function(q){
 
-  const n=parseInt(
-   String(q.number||"").replace(/\D/g,"")
-  )||0;
+  const n=
+   parseInt(
+    String(q.number||"")
+    .replace(/\D/g,"")
+   )||0;
 
   if(n>max)max=n;
 
  });
 
- return "QT-"+String(max+1).padStart(4,"0");
+ return "QT-"+
+  String(max+1)
+  .padStart(4,"0");
 
 }
 
+
+/* =========================
+   NEW QUOTATION
+========================= */
 
 function newQuotation(){
 
@@ -1486,19 +1911,45 @@ function newQuotation(){
 
  quotationItems=[];
 
- document.getElementById("qCustomer").value="";
- document.getElementById("qPhone").value="";
- document.getElementById("qAddress").value="";
- document.getElementById("qNumber").value=
+ document.getElementById(
+  "qCustomer"
+ ).value="";
+
+ document.getElementById(
+  "qPhone"
+ ).value="";
+
+ document.getElementById(
+  "qAddress"
+ ).value="";
+
+ document.getElementById(
+  "qNumber"
+ ).value=
   nextQuotationNumber();
 
- document.getElementById("qDate").value=today();
+ document.getElementById(
+  "qDate"
+ ).value=today();
 
- document.getElementById("discountType").value="percent";
- document.getElementById("discountValue").value="0";
- document.getElementById("gstValue").value="0";
- document.getElementById("qTerms").value=
-  "Quotation validity: 15 Days.";
+ document.getElementById(
+  "discountType"
+ ).value="percent";
+
+ document.getElementById(
+  "discountValue"
+ ).value="0";
+
+ document.getElementById(
+  "gstValue"
+ ).value="0";
+
+ document.getElementById(
+  "qTerms"
+ ).value=
+  "Quotation validity: "+
+  (settings.validity||"15 Days")+
+  ".";
 
  renderQuotationItems();
 
@@ -1507,17 +1958,25 @@ function newQuotation(){
 }
 
 
+/* =========================
+   QUOTATION ITEMS
+========================= */
+
 function addQuotationItem(item){
 
  quotationItems.push({
 
-  name:item?.name||"",
+  name:
+   item?.name||"",
 
-  qty:Number(item?.qty||1),
+  qty:
+   Number(item?.qty||1),
 
-  unit:item?.unit||"Sq.Ft",
+  unit:
+   item?.unit||"Sq.Ft",
 
-  rate:Number(item?.rate||0)
+  rate:
+   Number(item?.rate||0)
 
  });
 
@@ -1528,14 +1987,19 @@ function addQuotationItem(item){
 
 function renderQuotationItems(){
 
- const box=document.getElementById("quotationItems");
+ const box=
+  document.getElementById(
+   "quotationItems"
+  );
 
  box.innerHTML="";
 
  if(!quotationItems.length){
 
   box.innerHTML=
-   '<div class="empty">No items added. Click + Add Item.</div>';
+   '<div class="empty">'+
+   'No items added. Click + Add Item.'+
+   '</div>';
 
   calculateQuotation();
 
@@ -1543,64 +2007,148 @@ function renderQuotationItems(){
 
  }
 
- quotationItems.forEach(function(item,index){
 
-  const div=document.createElement("div");
+ quotationItems.forEach(
+ function(item,index){
 
-  div.className="item-card";
+  const div=
+   document.createElement("div");
+
+  div.className=
+   "item-card";
 
   div.innerHTML=`
 
    <div class="grid">
 
     <div class="field">
+
      <label>Item / Type</label>
+
      <input
       value="${esc(item.name)}"
-      oninput="updateItem(${index},'name',this.value)">
+      oninput="
+       updateItem(
+        ${index},
+        'name',
+        this.value
+       )
+      ">
+
     </div>
 
+
     <div class="field">
+
      <label>Qty / Sq.Ft</label>
+
      <input
       type="number"
       step="0.01"
       value="${item.qty}"
-      oninput="updateItem(${index},'qty',this.value)">
+      oninput="
+       updateItem(
+        ${index},
+        'qty',
+        this.value
+       )
+      ">
+
     </div>
 
+
     <div class="field">
+
      <label>Unit</label>
+
      <select
-      onchange="updateItem(${index},'unit',this.value)">
-      <option ${item.unit==="Sq.Ft"?"selected":""}>Sq.Ft</option>
-      <option ${item.unit==="Nos"?"selected":""}>Nos</option>
-      <option ${item.unit==="Meter"?"selected":""}>Meter</option>
-      <option ${item.unit==="Set"?"selected":""}>Set</option>
-      <option ${item.unit==="Item"?"selected":""}>Item</option>
+      onchange="
+       updateItem(
+        ${index},
+        'unit',
+        this.value
+       )
+      ">
+
+      <option
+       value="Sq.Ft"
+       ${item.unit==="Sq.Ft"?"selected":""}>
+       Sq.Ft
+      </option>
+
+      <option
+       value="Nos"
+       ${item.unit==="Nos"?"selected":""}>
+       Nos
+      </option>
+
+      <option
+       value="Meter"
+       ${item.unit==="Meter"?"selected":""}>
+       Meter
+      </option>
+
+      <option
+       value="Set"
+       ${item.unit==="Set"?"selected":""}>
+       Set
+      </option>
+
+      <option
+       value="Item"
+       ${item.unit==="Item"?"selected":""}>
+       Item
+      </option>
+
      </select>
+
     </div>
 
+
     <div class="field">
+
      <label>Rate</label>
+
      <input
       type="number"
       step="0.01"
       value="${item.rate}"
-      oninput="updateItem(${index},'rate',this.value)">
+      oninput="
+       updateItem(
+        ${index},
+        'rate',
+        this.value
+       )
+      ">
+
     </div>
 
    </div>
 
-   <div style="display:flex;justify-content:space-between;align-items:center">
+
+   <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+   ">
 
     <strong>
      Amount:
-     ₹${money(Number(item.qty)*Number(item.rate))}
+     ₹${money(
+      Number(item.qty)*
+      Number(item.rate)
+     )}
     </strong>
 
-    <button class="btn-red"
-     onclick="removeQuotationItem(${index})">
+    <button
+     class="btn-red"
+     onclick="
+      removeQuotationItem(
+       ${index}
+      )
+     ">
      Delete
     </button>
 
@@ -1617,15 +2165,24 @@ function renderQuotationItems(){
 }
 
 
-function updateItem(index,key,value){
+function updateItem(
+ index,
+ key,
+ value
+){
 
- if(key==="qty" || key==="rate"){
+ if(
+  key==="qty" ||
+  key==="rate"
+ ){
 
-  quotationItems[index][key]=Number(value)||0;
+  quotationItems[index][key]=
+   Number(value)||0;
 
  }else{
 
-  quotationItems[index][key]=value;
+  quotationItems[index][key]=
+   value;
 
  }
 
@@ -1636,18 +2193,26 @@ function updateItem(index,key,value){
 
 function removeQuotationItem(index){
 
- quotationItems.splice(index,1);
+ quotationItems.splice(
+  index,
+  1
+ );
 
  renderQuotationItems();
 
 }
 
 
+/* =========================
+   CALCULATE QUOTATION
+========================= */
+
 function calculateQuotation(){
 
  let subtotal=0;
 
- quotationItems.forEach(function(item){
+ quotationItems.forEach(
+ function(item){
 
   subtotal +=
    Number(item.qty||0)*
@@ -1655,21 +2220,32 @@ function calculateQuotation(){
 
  });
 
+
  const discountValue=
-  Number(document.getElementById("discountValue").value)||0;
+  Number(
+   document.getElementById(
+    "discountValue"
+   ).value
+  )||0;
 
  const discountType=
-  document.getElementById("discountType").value;
+  document.getElementById(
+   "discountType"
+  ).value;
 
  let discount=0;
 
  if(discountType==="percent"){
 
-  discount=subtotal*discountValue/100;
+  discount=
+   subtotal*
+   discountValue/
+   100;
 
  }else{
 
-  discount=discountValue;
+  discount=
+   discountValue;
 
  }
 
@@ -1679,26 +2255,43 @@ function calculateQuotation(){
 
  }
 
- const taxable=subtotal-discount;
+ const taxable=
+  subtotal-discount;
 
  const gstRate=
-  Number(document.getElementById("gstValue").value)||0;
+  Number(
+   document.getElementById(
+    "gstValue"
+   ).value
+  )||0;
 
- const gst=taxable*gstRate/100;
+ const gst=
+  taxable*gstRate/100;
 
- const grand=taxable+gst;
+ const grand=
+  taxable+gst;
 
- document.getElementById("qSubtotal")
- .innerText=money(subtotal);
 
- document.getElementById("qDiscount")
- .innerText=money(discount);
+ document.getElementById(
+  "qSubtotal"
+ ).innerText=
+  money(subtotal);
 
- document.getElementById("qGST")
- .innerText=money(gst);
+ document.getElementById(
+  "qDiscount"
+ ).innerText=
+  money(discount);
 
- document.getElementById("qGrandTotal")
- .innerText=money(grand);
+ document.getElementById(
+  "qGST"
+ ).innerText=
+  money(gst);
+
+ document.getElementById(
+  "qGrandTotal"
+ ).innerText=
+  money(grand);
+
 
  return {
   subtotal,
@@ -1710,14 +2303,22 @@ function calculateQuotation(){
 }
 
 
+/* =========================
+   SAVE QUOTATION
+========================= */
+
 function saveQuotation(){
 
  const customer=
-  document.getElementById("qCustomer").value.trim();
+  document.getElementById(
+   "qCustomer"
+  ).value.trim();
 
  if(!customer){
 
-  alert("Please enter Customer Name.");
+  alert(
+   "Please enter Customer Name."
+  );
 
   return;
 
@@ -1725,59 +2326,95 @@ function saveQuotation(){
 
  if(!quotationItems.length){
 
-  alert("Please add at least one quotation item.");
+  alert(
+   "Please add at least one quotation item."
+  );
 
   return;
 
  }
 
- const calc=calculateQuotation();
+ const calc=
+  calculateQuotation();
 
  const q={
 
-  id:currentQuotationId||newId(),
+  id:
+   currentQuotationId||
+   newId(),
 
   number:
-   document.getElementById("qNumber").value,
+   document.getElementById(
+    "qNumber"
+   ).value,
 
   date:
-   document.getElementById("qDate").value,
+   document.getElementById(
+    "qDate"
+   ).value,
 
   customer,
 
   phone:
-   document.getElementById("qPhone").value,
+   document.getElementById(
+    "qPhone"
+   ).value,
 
   address:
-   document.getElementById("qAddress").value,
+   document.getElementById(
+    "qAddress"
+   ).value,
 
-  items:quotationItems,
+  items:
+   JSON.parse(
+    JSON.stringify(
+     quotationItems
+    )
+   ),
 
   discountType:
-   document.getElementById("discountType").value,
+   document.getElementById(
+    "discountType"
+   ).value,
 
   discountValue:
-   Number(document.getElementById("discountValue").value)||0,
+   Number(
+    document.getElementById(
+     "discountValue"
+    ).value
+   )||0,
 
   gstRate:
-   Number(document.getElementById("gstValue").value)||0,
+   Number(
+    document.getElementById(
+     "gstValue"
+    ).value
+   )||0,
 
-  subtotal:calc.subtotal,
+  subtotal:
+   calc.subtotal,
 
-  discount:calc.discount,
+  discount:
+   calc.discount,
 
-  gst:calc.gst,
+  gst:
+   calc.gst,
 
-  grand:calc.grand,
+  grand:
+   calc.grand,
 
   terms:
-   document.getElementById("qTerms").value
+   document.getElementById(
+    "qTerms"
+   ).value
 
  };
 
- const index=quotations.findIndex(
-  x=>x.id===q.id
- );
+
+ const index=
+  quotations.findIndex(
+   x=>x.id===q.id
+  );
 
  if(index>=0){
 
@@ -1789,11 +2426,14 @@ function saveQuotation(){
 
  }
 
- currentQuotationId=q.id;
+ currentQuotationId=
+  q.id;
 
  saveStorage();
 
- alert("Quotation saved successfully.");
+ alert(
+  "Quotation saved successfully."
+ );
 
  showPage("savedQuotes");
 
@@ -1806,36 +2446,54 @@ function saveQuotation(){
 
 function createQuotationFromMeasurement(id){
 
- const m=measurements.find(x=>x.id===id);
+ const m=
+  measurements.find(
+   x=>x.id===id
+  );
 
  if(!m)return;
 
  currentQuotationId=null;
 
- document.getElementById("qCustomer").value=m.customer;
+ document.getElementById(
+  "qCustomer"
+ ).value=m.customer;
 
- document.getElementById("qPhone").value=m.phone;
+ document.getElementById(
+  "qPhone"
+ ).value=m.phone;
 
- document.getElementById("qAddress").value=m.address;
+ document.getElementById(
+  "qAddress"
+ ).value=m.address;
 
- document.getElementById("qNumber").value=
+ document.getElementById(
+  "qNumber"
+ ).value=
   nextQuotationNumber();
 
- document.getElementById("qDate").value=today();
+ document.getElementById(
+  "qDate"
+ ).value=today();
 
  quotationItems=[];
 
+
  /*
-   IMPORTANT:
-   Measurement rows are NOT copied individually.
-   Same curtain type is combined into one quotation item.
+  IMPORTANT:
+  Measurement rows are NOT copied
+  individually.
+
+  Same curtain type is combined
+  into one quotation item.
  */
 
  const grouped={};
 
  m.rows.forEach(function(row){
 
-  const key=row.type||"Other";
+  const key=
+   row.type||"Other";
 
   if(!grouped[key]){
 
@@ -1846,38 +2504,62 @@ function createQuotationFromMeasurement(id){
 
   }
 
-  grouped[key].sqft += Number(row.sqft||0);
+  grouped[key].sqft +=
+   Number(row.sqft||0);
 
-  if(!grouped[key].rate && row.rate){
+  if(
+   !grouped[key].rate &&
+   row.rate
+  ){
 
-   grouped[key].rate=row.rate;
+   grouped[key].rate=
+    row.rate;
 
   }
 
  });
 
- Object.keys(grouped).forEach(function(type){
+
+ Object.keys(grouped)
+ .forEach(function(type){
 
   quotationItems.push({
 
    name:type,
 
-   qty:Number(grouped[type].sqft.toFixed(2)),
+   qty:
+    Number(
+     grouped[type]
+     .sqft
+     .toFixed(2)
+    ),
 
    unit:"Sq.Ft",
 
-   rate:Number(grouped[type].rate||0)
+   rate:
+    Number(
+     grouped[type].rate||0
+    )
 
   });
 
  });
 
- document.getElementById("discountValue").value="0";
 
- document.getElementById("gstValue").value="0";
+ document.getElementById(
+  "discountValue"
+ ).value="0";
 
- document.getElementById("qTerms").value=
-  "Quotation validity: 15 Days.";
+ document.getElementById(
+  "gstValue"
+ ).value="0";
+
+ document.getElementById(
+  "qTerms"
+ ).value=
+  "Quotation validity: "+
+  (settings.validity||"15 Days")+
+  ".";
 
  renderQuotationItems();
 
@@ -1888,11 +2570,14 @@ function createQuotationFromMeasurement(id){
 
 function measurementToQuotation(){
 
- const record=getMeasurementForm();
+ const record=
+  getMeasurementForm();
 
  if(!record.customer){
 
-  alert("Please enter Customer Name.");
+  alert(
+   "Please enter Customer Name."
+  );
 
   return;
 
@@ -1900,19 +2585,18 @@ function measurementToQuotation(){
 
  if(!record.rows.length){
 
-  alert("Please enter at least one measurement.");
+  alert(
+   "Please enter at least one measurement."
+  );
 
   return;
 
  }
 
- /*
-  Save measurement first
- */
-
- const index=measurements.findIndex(
-  x=>x.id===record.id
- );
+ const index=
+  measurements.findIndex(
+   x=>x.id===record.id
+  );
 
  if(index>=0){
 
@@ -1926,7 +2610,9 @@ function measurementToQuotation(){
 
  saveStorage();
 
- createQuotationFromMeasurement(record.id);
+ createQuotationFromMeasurement(
+  record.id
+ );
 
 }
 
@@ -1937,54 +2623,98 @@ function measurementToQuotation(){
 
 function renderSavedQuotes(){
 
- const box=document.getElementById("savedQuoteList");
+ const box=
+  document.getElementById(
+   "savedQuoteList"
+  );
 
  box.innerHTML="";
 
  if(!quotations.length){
 
   box.innerHTML=
-   '<div class="empty">No quotations saved yet.</div>';
+   '<div class="empty">'+
+   'No quotations saved yet.'+
+   '</div>';
 
   return;
 
  }
 
- quotations.slice().reverse().forEach(function(q){
 
-  const div=document.createElement("div");
+ quotations
+ .slice()
+ .reverse()
+ .forEach(function(q){
 
-  div.className="quote-card";
+  const div=
+   document.createElement("div");
+
+  div.className=
+   "quote-card";
 
   div.innerHTML=`
 
-   <h3>${esc(q.number)}</h3>
+   <h3>
+    ${esc(q.number)}
+   </h3>
 
-   <strong>${esc(q.customer)}</strong>
+   <strong>
+    ${esc(q.customer)}
+   </strong>
 
    <div class="small">
-   ${esc(q.date||"")}
+    ${esc(q.date||"")}
    </div>
 
    <p>
-   Grand Total:
-   <b>₹${money(q.grand)}</b>
+    Grand Total:
+    <b>₹${money(q.grand)}</b>
    </p>
 
-   <button class="btn-blue"
-   onclick="editQuotation(${q.id})">
-   ✏ Edit
-   </button>
+   <div class="quote-actions">
 
-   <button class="btn-green"
-   onclick="openQuotationPreview(${q.id})">
-   👁 View
-   </button>
+    <button
+     class="btn-blue"
+     onclick="
+      editQuotation(
+       ${q.id}
+      )
+     ">
+     ✏ Edit
+    </button>
 
-   <button class="btn-red"
-   onclick="deleteQuotation(${q.id})">
-   🗑 Delete
-   </button>
+    <button
+     class="btn-green"
+     onclick="
+      openQuotationPreview(
+       ${q.id}
+      )
+     ">
+     👁 View
+    </button>
+
+    <button
+     class="btn-dark"
+     onclick="
+      shareQuotationPDF(
+       ${q.id}
+      )
+     ">
+     📤 Share PDF
+    </button>
+
+    <button
+     class="btn-red"
+     onclick="
+      deleteQuotation(
+       ${q.id}
+      )
+     ">
+     🗑 Delete
+    </button>
+
+   </div>
 
   `;
 
@@ -1995,38 +2725,68 @@ function renderSavedQuotes(){
 }
 
 
+/* =========================
+   EDIT QUOTATION
+========================= */
+
 function editQuotation(id){
 
- const q=quotations.find(x=>x.id===id);
+ const q=
+  quotations.find(
+   x=>x.id===id
+  );
 
  if(!q)return;
 
- currentQuotationId=q.id;
+ currentQuotationId=
+  q.id;
 
- document.getElementById("qCustomer").value=q.customer;
+ document.getElementById(
+  "qCustomer"
+ ).value=q.customer;
 
- document.getElementById("qPhone").value=q.phone;
+ document.getElementById(
+  "qPhone"
+ ).value=q.phone;
 
- document.getElementById("qAddress").value=q.address;
+ document.getElementById(
+  "qAddress"
+ ).value=q.address;
 
- document.getElementById("qNumber").value=q.number;
+ document.getElementById(
+  "qNumber"
+ ).value=q.number;
 
- document.getElementById("qDate").value=q.date;
+ document.getElementById(
+  "qDate"
+ ).value=q.date;
 
- document.getElementById("discountType").value=
+ document.getElementById(
+  "discountType"
+ ).value=
   q.discountType||"percent";
 
- document.getElementById("discountValue").value=
+ document.getElementById(
+  "discountValue"
+ ).value=
   q.discountValue||0;
 
- document.getElementById("gstValue").value=
+ document.getElementById(
+  "gstValue"
+ ).value=
   q.gstRate||0;
 
- document.getElementById("qTerms").value=
+ document.getElementById(
+  "qTerms"
+ ).value=
   q.terms||"";
 
  quotationItems=
-  JSON.parse(JSON.stringify(q.items||[]));
+  JSON.parse(
+   JSON.stringify(
+    q.items||[]
+   )
+  );
 
  renderQuotationItems();
 
@@ -2037,10 +2797,14 @@ function editQuotation(id){
 
 function deleteQuotation(id){
 
- if(!confirm("Delete this quotation?"))return;
+ if(!confirm(
+  "Delete this quotation?"
+ ))return;
 
  quotations=
-  quotations.filter(x=>x.id!==id);
+  quotations.filter(
+   x=>x.id!==id
+  );
 
  saveStorage();
 
@@ -2050,20 +2814,15 @@ function deleteQuotation(id){
 
 
 /* =========================
-   PREVIEW
+   QUOTATION PREVIEW HTML
 ========================= */
 
-function openQuotationPreview(id){
-
- const q=quotations.find(x=>x.id===id);
-
- if(!q)return;
-
- currentQuotationId=q.id;
+function buildQuotationHTML(q){
 
  let itemsHTML="";
 
- q.items.forEach(function(item,index){
+ q.items.forEach(
+ function(item,index){
 
   const amount=
    Number(item.qty||0)*
@@ -2071,21 +2830,31 @@ function openQuotationPreview(id){
 
   itemsHTML+=`
 
-  <tr>
+   <tr>
 
-   <td>${index+1}</td>
+    <td>${index+1}</td>
 
-   <td>${esc(item.name)}</td>
+    <td>
+     ${esc(item.name)}
+    </td>
 
-   <td>${money(item.qty)}</td>
+    <td>
+     ${money(item.qty)}
+    </td>
 
-   <td>${esc(item.unit)}</td>
+    <td>
+     ${esc(item.unit)}
+    </td>
 
-   <td>₹${money(item.rate)}</td>
+    <td>
+     ₹${money(item.rate)}
+    </td>
 
-   <td>₹${money(amount)}</td>
+    <td>
+     ₹${money(amount)}
+    </td>
 
-  </tr>
+   </tr>
 
   `;
 
@@ -2094,10 +2863,15 @@ function openQuotationPreview(id){
 
  const logo=
   settings.logo
-  ? `<img src="${settings.logo}" class="logo">`
-  : "";
+  ?
+  `<img
+   src="${settings.logo}"
+   class="logo">`
+  :
+  "";
 
- const html=`
+
+ return `
 
  <div class="preview">
 
@@ -2105,26 +2879,62 @@ function openQuotationPreview(id){
 
    ${logo}
 
-   <h1>${esc(
-    settings.name||"Your Curtain Shop"
-   )}</h1>
+   <h1>
+    ${esc(
+     settings.name||
+     "Your Curtain Shop"
+    )}
+   </h1>
 
-   <div>${esc(settings.address||"")}</div>
+   ${
+    settings.address
+    ?
+    `<div>
+      ${esc(settings.address)}
+     </div>`
+    :
+    ""
+   }
 
-   <div>
-    ${esc(settings.phone||"")}
-    ${settings.whatsapp
-     ? " | WhatsApp: "+esc(settings.whatsapp)
-     : ""}
-   </div>
+   ${
+    settings.phone
+    ?
+    `<div>
+      Phone: ${esc(settings.phone)}
+     </div>`
+    :
+    ""
+   }
 
-   ${settings.email
-    ? "<div>"+esc(settings.email)+"</div>"
-    : ""}
+   ${
+    settings.whatsapp
+    ?
+    `<div>
+      WhatsApp: ${esc(settings.whatsapp)}
+     </div>`
+    :
+    ""
+   }
 
-   ${settings.gst
-    ? "<div>GST: "+esc(settings.gst)+"</div>"
-    : ""}
+   ${
+    settings.email
+    ?
+    `<div>
+      ${esc(settings.email)}
+     </div>`
+    :
+    ""
+   }
+
+   ${
+    settings.gst
+    ?
+    `<div>
+      GST: ${esc(settings.gst)}
+     </div>`
+    :
+    ""
+   }
 
   </div>
 
@@ -2133,22 +2943,39 @@ function openQuotationPreview(id){
 
    <div>
 
-    <strong>Customer</strong><br>
+    <strong>
+     Customer
+    </strong>
 
-    ${esc(q.customer)}<br>
+    <br>
 
-    ${esc(q.phone)}<br>
+    ${esc(q.customer)}
+
+    <br>
+
+    ${esc(q.phone)}
+
+    <br>
 
     ${esc(q.address)}
 
    </div>
 
+
    <div>
 
-    <strong>Quotation No:</strong>
-    ${esc(q.number)}<br>
+    <strong>
+     Quotation No:
+    </strong>
 
-    <strong>Date:</strong>
+    ${esc(q.number)}
+
+    <br>
+
+    <strong>
+     Date:
+    </strong>
+
     ${esc(q.date)}
 
    </div>
@@ -2163,10 +2990,15 @@ function openQuotationPreview(id){
     <tr>
 
      <th>No</th>
+
      <th>Item / Type</th>
+
      <th>Qty</th>
+
      <th>Unit</th>
+
      <th>Rate</th>
+
      <th>Amount</th>
 
     </tr>
@@ -2185,23 +3017,54 @@ function openQuotationPreview(id){
   <div class="quote-total">
 
    <div class="summary-row">
-    <span>Subtotal</span>
-    <strong>₹${money(q.subtotal)}</strong>
+
+    <span>
+     Subtotal
+    </span>
+
+    <strong>
+     ₹${money(q.subtotal)}
+    </strong>
+
    </div>
 
-   <div class="summary-row">
-    <span>Discount</span>
-    <strong>₹${money(q.discount)}</strong>
-   </div>
 
    <div class="summary-row">
-    <span>GST ${money(q.gstRate)}%</span>
-    <strong>₹${money(q.gst)}</strong>
+
+    <span>
+     Discount
+    </span>
+
+    <strong>
+     ₹${money(q.discount)}
+    </strong>
+
    </div>
+
+
+   <div class="summary-row">
+
+    <span>
+     GST ${money(q.gstRate)}%
+    </span>
+
+    <strong>
+     ₹${money(q.gst)}
+    </strong>
+
+   </div>
+
 
    <div class="summary-row grand">
-    <span>Grand Total</span>
-    <strong>₹${money(q.grand)}</strong>
+
+    <span>
+     Grand Total
+    </span>
+
+    <strong>
+     ₹${money(q.grand)}
+    </strong>
+
    </div>
 
   </div>
@@ -2209,7 +3072,9 @@ function openQuotationPreview(id){
 
   <div style="margin-top:30px">
 
-   <strong>Terms & Conditions</strong>
+   <strong>
+    Terms & Conditions
+   </strong>
 
    <p style="white-space:pre-wrap">
 ${esc(q.terms||"")}
@@ -2218,95 +3083,497 @@ ${esc(q.terms||"")}
   </div>
 
 
-  <div style="margin-top:40px;text-align:center">
+  <div style="
+   margin-top:40px;
+   text-align:center;
+  ">
 
    Thank you for your business.
 
   </div>
 
+
  </div>
 
  `;
-
- document.getElementById("previewContent")
- .innerHTML=html;
-
- showPage("quotePreview");
 
 }
 
 
 /* =========================
-   SHARE
+   PREVIEW
 ========================= */
 
-async function shareQuotation(){
+function openQuotationPreview(id){
 
- const q=quotations.find(
-  x=>x.id===currentQuotationId
- );
+ const q=
+  quotations.find(
+   x=>x.id===id
+  );
 
  if(!q)return;
 
+ currentQuotationId=
+  q.id;
+
+ document.getElementById(
+  "previewContent"
+ ).innerHTML=
+  buildQuotationHTML(q);
+
+ showPage(
+  "quotePreview"
+ );
+
+}
+
+
+/* =========================
+   PREVIEW BUTTON
+========================= */
+
+function previewQuotation(){
+
+ const customer=
+  document.getElementById(
+   "qCustomer"
+  ).value.trim();
+
+ if(!customer){
+
+  alert(
+   "Please enter Customer Name."
+  );
+
+  return;
+
+ }
+
+ if(!quotationItems.length){
+
+  alert(
+   "Please add at least one quotation item."
+  );
+
+  return;
+
+ }
+
+
+ const calc=
+  calculateQuotation();
+
+
+ const q={
+
+  id:
+   currentQuotationId||
+   newId(),
+
+  number:
+   document.getElementById(
+    "qNumber"
+   ).value,
+
+  date:
+   document.getElementById(
+    "qDate"
+   ).value,
+
+  customer,
+
+  phone:
+   document.getElementById(
+    "qPhone"
+   ).value,
+
+  address:
+   document.getElementById(
+    "qAddress"
+   ).value,
+
+  items:
+   quotationItems,
+
+  subtotal:
+   calc.subtotal,
+
+  discount:
+   calc.discount,
+
+  gst:
+   calc.gst,
+
+  gstRate:
+   Number(
+    document.getElementById(
+     "gstValue"
+    ).value
+   )||0,
+
+  grand:
+   calc.grand,
+
+  terms:
+   document.getElementById(
+    "qTerms"
+   ).value
+
+ };
+
+
+ currentQuotationId=
+  q.id;
+
+ document.getElementById(
+  "previewContent"
+ ).innerHTML=
+  buildQuotationHTML(q);
+
+ showPage(
+  "quotePreview"
+ );
+
+}
+
+
+/* =========================
+   SHARE PDF
+========================= */
+
+async function shareQuotationPDF(id){
+
+ const q=
+  quotations.find(
+   x=>x.id===id
+  );
+
+ if(!q)return;
+
+
  /*
-   First create a simple text summary.
-   Android can share this even if PDF
-   generation is unavailable.
+  We first create the PDF.
+  Then Android Share Sheet is opened
+  with the actual PDF file.
  */
 
- const text=
- `Quotation ${q.number}
+ const status=
+  document.getElementById(
+   "pdfStatus"
+  );
 
-Customer: ${q.customer}
-
-${q.items.map(function(i){
-
- return i.name+
- " - "+
- i.qty+
- " "+
- i.unit+
- " × ₹"+
- money(i.rate)+
- " = ₹"+
- money(i.qty*i.rate);
-
- }).join("\n")}
-
-Subtotal: ₹${money(q.subtotal)}
-Discount: ₹${money(q.discount)}
-GST: ₹${money(q.gst)}
-Grand Total: ₹${money(q.grand)}
-
-Thank you for your business.`;
 
  try{
 
-  if(navigator.share){
+  const sheet=
+   document.getElementById(
+    "pdfSheet"
+   );
 
-   await navigator.share({
+  sheet.innerHTML=
+   buildQuotationHTML(q);
 
-    title:"Quotation "+q.number,
 
-    text:text
+  const preview=
+   sheet.querySelector(
+    ".preview"
+   );
 
-   });
 
-  }else{
+  /*
+   Wait for logo/images to render.
+  */
 
-   await navigator.clipboard.writeText(text);
+  await waitForImages(
+   preview
+  );
 
-   alert("Quotation copied. You can paste it into WhatsApp.");
+
+  const canvas=
+   await html2canvas(
+    preview,
+    {
+     scale:2,
+     useCORS:true,
+     backgroundColor:"#ffffff",
+     logging:false
+    }
+   );
+
+
+  const {
+   jsPDF
+  }=window.jspdf;
+
+
+  const pdf=
+   new jsPDF(
+    "p",
+    "mm",
+    "a4"
+   );
+
+
+  const pageWidth=
+   pdf.internal.pageSize.getWidth();
+
+  const pageHeight=
+   pdf.internal.pageSize.getHeight();
+
+
+  const margin=8;
+
+  const usableWidth=
+   pageWidth-
+   margin*2;
+
+
+  const imgWidth=
+   usableWidth;
+
+  const imgHeight=
+   canvas.height*
+   imgWidth/
+   canvas.width;
+
+
+  let heightLeft=
+   imgHeight;
+
+  let position=
+   margin;
+
+
+  const imgData=
+   canvas.toDataURL(
+    "image/jpeg",
+    0.95
+   );
+
+
+  pdf.addImage(
+   imgData,
+   "JPEG",
+   margin,
+   position,
+   imgWidth,
+   imgHeight
+  );
+
+
+  heightLeft-=
+   pageHeight-
+   margin*2;
+
+
+  while(heightLeft>0){
+
+   position=
+    margin-
+    (
+     imgHeight-
+     heightLeft
+    );
+
+   pdf.addPage();
+
+   pdf.addImage(
+    imgData,
+    "JPEG",
+    margin,
+    position,
+    imgWidth,
+    imgHeight
+   );
+
+   heightLeft-=
+    pageHeight-
+    margin*2;
 
   }
 
- }catch(e){
+
+  const blob=
+   pdf.output("blob");
+
+
+  const file=
+   new File(
+    [
+     blob
+    ],
+    "Quotation-"+
+    q.number+
+    ".pdf",
+    {
+     type:"application/pdf"
+    }
+   );
+
 
   /*
-    User cancelled share.
+   Android Web Share with file.
   */
 
+  if(
+   navigator.share &&
+   navigator.canShare &&
+   navigator.canShare({
+    files:[file]
+   })
+  ){
+
+   try{
+
+    await navigator.share({
+
+     title:
+      "Quotation "+
+      q.number,
+
+     files:[
+      file
+     ]
+
+    });
+
+    return;
+
+   }catch(error){
+
+    /*
+     User cancellation is not
+     an application error.
+    */
+
+    if(
+     error &&
+     error.name===
+     "AbortError"
+    ){
+
+     return;
+
+    }
+
+   }
+
+  }
+
+
+  /*
+   Fallback:
+   download the actual PDF.
+  */
+
+  const url=
+   URL.createObjectURL(
+    blob
+   );
+
+  const a=
+   document.createElement(
+    "a"
+   );
+
+  a.href=url;
+
+  a.download=
+   "Quotation-"+
+   q.number+
+   ".pdf";
+
+  document.body.appendChild(a);
+
+  a.click();
+
+  a.remove();
+
+
+  setTimeout(
+   function(){
+
+    URL.revokeObjectURL(
+     url
+    );
+
+   },
+   2000
+  );
+
+
+  alert(
+   "PDF downloaded. "+
+   "Open WhatsApp and attach the downloaded PDF."
+  );
+
+
+ }catch(error){
+
+  console.error(
+   "PDF error:",
+   error
+  );
+
+  alert(
+   "PDF creation failed. "+
+   "Please use View → Print / Save PDF."
+  );
+
+ }finally{
+
+  const sheet=
+   document.getElementById(
+    "pdfSheet"
+   );
+
+  sheet.innerHTML="";
+
  }
+
+}
+
+
+/* =========================
+   WAIT FOR IMAGES
+========================= */
+
+function waitForImages(container){
+
+ const images=
+  container.querySelectorAll(
+   "img"
+  );
+
+ if(!images.length){
+
+  return Promise.resolve();
+
+ }
+
+ return Promise.all(
+
+  Array.from(images)
+  .map(function(img){
+
+   if(img.complete){
+
+    return Promise.resolve();
+
+   }
+
+   return new Promise(
+    function(resolve){
+
+     img.onload=resolve;
+     img.onerror=resolve;
+
+    }
+   );
+
+  })
+
+ );
 
 }
 
@@ -2317,28 +3584,45 @@ Thank you for your business.`;
 
 function loadSettings(){
 
- document.getElementById("sName").value=
+ document.getElementById(
+  "sName"
+ ).value=
   settings.name||"";
 
- document.getElementById("sPhone").value=
+ document.getElementById(
+  "sPhone"
+ ).value=
   settings.phone||"";
 
- document.getElementById("sWhatsapp").value=
+ document.getElementById(
+  "sWhatsapp"
+ ).value=
   settings.whatsapp||"";
 
- document.getElementById("sEmail").value=
+ document.getElementById(
+  "sEmail"
+ ).value=
   settings.email||"";
 
- document.getElementById("sGST").value=
+ document.getElementById(
+  "sGST"
+ ).value=
   settings.gst||"";
 
- document.getElementById("sValidity").value=
-  settings.validity||"15 Days";
+ document.getElementById(
+  "sValidity"
+ ).value=
+  settings.validity||
+  "15 Days";
 
- document.getElementById("sAddress").value=
+ document.getElementById(
+  "sAddress"
+ ).value=
   settings.address||"";
 
- document.getElementById("logoPreview").src=
+ document.getElementById(
+  "logoPreview"
+ ).src=
   settings.logo||"";
 
 }
@@ -2347,51 +3631,75 @@ function loadSettings(){
 function saveSettings(){
 
  settings.name=
-  document.getElementById("sName").value.trim();
+  document.getElementById(
+   "sName"
+  ).value.trim();
 
  settings.phone=
-  document.getElementById("sPhone").value.trim();
+  document.getElementById(
+   "sPhone"
+  ).value.trim();
 
  settings.whatsapp=
-  document.getElementById("sWhatsapp").value.trim();
+  document.getElementById(
+   "sWhatsapp"
+  ).value.trim();
 
  settings.email=
-  document.getElementById("sEmail").value.trim();
+  document.getElementById(
+   "sEmail"
+  ).value.trim();
 
  settings.gst=
-  document.getElementById("sGST").value.trim();
+  document.getElementById(
+   "sGST"
+  ).value.trim();
 
  settings.validity=
-  document.getElementById("sValidity").value.trim();
+  document.getElementById(
+   "sValidity"
+  ).value.trim();
 
  settings.address=
-  document.getElementById("sAddress").value.trim();
+  document.getElementById(
+   "sAddress"
+  ).value.trim();
 
  saveStorage();
 
- alert("Business settings saved.");
+ alert(
+  "Business settings saved."
+ );
 
 }
 
 
 function loadLogo(event){
 
- const file=event.target.files[0];
+ const file=
+  event.target.files[0];
 
  if(!file)return;
 
- const reader=new FileReader();
+ const reader=
+  new FileReader();
 
- reader.onload=function(e){
 
-  settings.logo=e.target.result;
+ reader.onload=
+  function(e){
 
-  document.getElementById("logoPreview")
-  .src=e.target.result;
+   settings.logo=
+    e.target.result;
 
-  saveStorage();
+   document.getElementById(
+    "logoPreview"
+   ).src=
+    e.target.result;
 
- };
+   saveStorage();
+
+  };
+
 
  reader.readAsDataURL(file);
 
@@ -2405,24 +3713,49 @@ function loadLogo(event){
 function downloadBackup(){
 
  const backup={
+
   measurements,
+
   quotations,
+
   settings,
-  exportedAt:new Date().toISOString()
+
+  exportedAt:
+   new Date().toISOString()
+
  };
 
- const blob=new Blob(
-  [JSON.stringify(backup,null,2)],
-  {type:"application/json"}
- );
 
- const url=URL.createObjectURL(blob);
+ const blob=
+  new Blob(
+   [
+    JSON.stringify(
+     backup,
+     null,
+     2
+    )
+   ],
+   {
+    type:"application/json"
+   }
+  );
 
- const a=document.createElement("a");
+
+ const url=
+  URL.createObjectURL(
+   blob
+  );
+
+
+ const a=
+  document.createElement(
+   "a"
+  );
 
  a.href=url;
 
- a.download="curtain-shop-backup.json";
+ a.download=
+  "curtain-shop-backup.json";
 
  document.body.appendChild(a);
 
@@ -2430,26 +3763,38 @@ function downloadBackup(){
 
  a.remove();
 
- setTimeout(function(){
 
-  URL.revokeObjectURL(url);
+ setTimeout(
+  function(){
 
- },1000);
+   URL.revokeObjectURL(
+    url
+   );
+
+  },
+  1000
+ );
 
 }
 
 
 /* =========================
-   START
+   INITIALIZE
 ========================= */
 
 function init(){
 
  loadStorage();
 
- document.getElementById("mDate").value=today();
+ document.getElementById(
+  "mDate"
+ ).value=
+  today();
 
- document.getElementById("qDate").value=today();
+ document.getElementById(
+  "qDate"
+ ).value=
+  today();
 
  addMeasurementRow();
 
@@ -2460,11 +3805,10 @@ function init(){
 }
 
 
-/*
-  Start only after HTML is ready.
-*/
-
-if(document.readyState==="loading"){
+if(
+ document.readyState===
+ "loading"
+){
 
  document.addEventListener(
   "DOMContentLoaded",
